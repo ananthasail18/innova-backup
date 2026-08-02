@@ -1,0 +1,21 @@
+# TasteAI Codeowners Configuration
+# Global fallback
+* @ananthasail18
+
+# Frontend Ownership
+/frontend/ @ananthasail18
+
+# Backend & Core Ownership
+/backend/app/routes/ @ananthasail18
+/backend/app/services/ @ananthasail18
+/backend/app/models/ @ananthasail18
+
+# AI Pipeline Ownership
+/backend/app/ai/ @ananthasail18
+
+# Data Ingestion & Database Ownership
+/backend/app/ingestion/ @ananthasail18
+/backend/alembic/ @ananthasail18
+
+# Documentation
+/docs/ @ananthasail18

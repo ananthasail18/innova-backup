@@ -132,6 +132,26 @@ innova_hack/
 
 ---
 
+## 👥 Team Collaboration & Branching Strategy
+
+TasteAI is configured for multi-developer collaboration across four team roles (`frontend`, `backend`, `ai`, `data`).
+
+### Branch Flow
+```
+main (Production Release)
+  ▲
+  │ (Release PR)
+develop (Integration Branch)
+  ▲               ▲               ▲               ▲
+  │ (PR Merge)    │ (PR Merge)    │ (PR Merge)    │ (PR Merge)
+  │               │               │               │
+feature/frontend  feature/backend  feature/ai     feature/data
+```
+
+For full details on opening PRs, code reviews, and commit conventions, see **[CONTRIBUTING.md](CONTRIBUTING.md)**.
+
+---
+
 ## ❓ Common Setup & Environment Troubleshooting
 
 If your team member or friend is having environment issues after cloning, check these step-by-step solutions:

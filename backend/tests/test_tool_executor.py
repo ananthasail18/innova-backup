@@ -1,4 +1,4 @@
-from app.ai.tools.executor import ToolExecutor
+from app.ai.prompts.tools import ToolExecutor
 from app.schemas.chat import ToolCallSchema
 
 def test_tool_executor_highlight():

@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.core.config import settings
-from app.core.exceptions import global_exception_handler
-from app.api.health import router as health_router
-from app.core.logging import logger
+from app.config.config import settings
+from app.middleware.exceptions import global_exception_handler
+from app.config.logging import logger
 
 def create_app() -> FastAPI:
     app = FastAPI(title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json")
@@ -23,14 +22,15 @@ def create_app() -> FastAPI:
     app.add_exception_handler(Exception, global_exception_handler)
 
     # Routers
-    from app.api.restaurant import router as restaurant_router
-    from app.api.categories import router as categories_router
-    from app.api.dishes import router as dishes_router
-    from app.api.users import router as users_router
-    from app.api.taste_profile import router as taste_profile_router
-    from app.api.recommendations import router as recommendations_router
-    from app.api.community import router as community_router
-    from app.api.chat import router as chat_router
+    from app.routes.health import router as health_router
+    from app.routes.restaurant import router as restaurant_router
+    from app.routes.categories import router as categories_router
+    from app.routes.dishes import router as dishes_router
+    from app.routes.users import router as users_router
+    from app.routes.taste_profile import router as taste_profile_router
+    from app.routes.recommendations import router as recommendations_router
+    from app.routes.community import router as community_router
+    from app.routes.chat import router as chat_router
     
     app.include_router(health_router, prefix="", tags=["health"])
     app.include_router(restaurant_router, prefix=settings.API_V1_STR, tags=["restaurant"])
