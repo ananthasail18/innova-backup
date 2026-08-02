@@ -132,6 +132,49 @@ innova_hack/
 
 ---
 
+## ❓ Common Setup & Environment Troubleshooting
+
+If your team member or friend is having environment issues after cloning, check these step-by-step solutions:
+
+### 1. `ModuleNotFoundError: No module named 'openai'` (or other dependencies)
+Make sure all backend dependencies are installed inside the virtual environment:
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+### 2. `ModuleNotFoundError: No module named 'app'`
+This happens if Python cannot find the root `app` module package path. Always set `PYTHONPATH` or run Uvicorn as a module:
+- **Windows (PowerShell)**:
+  ```powershell
+  cd backend
+  $env:PYTHONPATH = "."
+  python -m uvicorn app.main:app --host 0.0.0.0 --port 8001
+  ```
+- **Linux / macOS**:
+  ```bash
+  cd backend
+  PYTHONPATH=. python -m uvicorn app.main:app --host 0.0.0.0 --port 8001
+  ```
+
+### 3. Database is Empty / Restaurant 404 Error
+If the database hasn't been initialized, run the seed script once:
+```bash
+cd backend
+python -m app.seed.seed_data
+```
+
+### 4. Gemini AI Assistant Not Responding
+Copy `backend/.env.example` to `backend/.env` and add your Gemini API Key:
+```env
+GEMINI_API_KEY=your_actual_gemini_api_key_here
+```
+
+### 5. Frontend Cannot Connect to Backend (Network Error)
+Make sure the backend is running on **port 8001** (or set `VITE_API_BASE_URL` in `frontend/.env` to match your backend port).
+
+---
+
 ## 📄 License
 
 This project was created for **Innova Hack 2026**. All rights reserved.
