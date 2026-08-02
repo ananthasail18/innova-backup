@@ -88,10 +88,21 @@ export const useTasteProfile = (userId: string | null) => {
     queryKey: ['taste-profile', userId],
     queryFn: async () => {
       if (!userId) return null;
-      const { data } = await api.get<ApiResponse<TasteProfile>>(`/taste-profile/${userId}`);
-      return data.data;
+      try {
+        const { data } = await api.get<ApiResponse<TasteProfile>>(`/taste-profile/${userId}`);
+        return data.data || null;
+      } catch (err: any) {
+        if (err.response?.status === 404) {
+          return null;
+        }
+        throw err;
+      }
     },
     enabled: !!userId,
+    retry: (failureCount, error: any) => {
+      if (error.response?.status === 404) return false;
+      return failureCount < 3;
+    },
   });
 };
 

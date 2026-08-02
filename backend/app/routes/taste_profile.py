@@ -27,7 +27,7 @@ def get_taste_profile(user_id: str, db: Session = Depends(get_db)):
     repo = TasteProfileRepository(db)
     profile = repo.get_by_user_id(user_id)
     if not profile:
-        raise HTTPException(status_code=404, detail="Taste Profile not found")
+        return {"status": "success", "data": None}
     return {"status": "success", "data": TasteProfileOut.model_validate(profile).model_dump()}
 
 @router.put("/taste-profile/{user_id}", response_model=dict)
