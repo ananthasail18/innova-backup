@@ -49,17 +49,20 @@ def process_chat(request: ChatMessageRequest, db: Session = Depends(get_db)):
         if llm_response.get("tool_calls"):
             import json
             for tc in llm_response["tool_calls"]:
-                args = tc["function"]["arguments"]
+                func = tc.get("function", {})
+                name = func.get("name", "") if isinstance(func, dict) else ""
+                args = func.get("arguments", {}) if isinstance(func, dict) else {}
                 if isinstance(args, str):
                     try:
                         args = json.loads(args)
                     except Exception:
                         args = {}
-                tool_calls.append(ToolCallSchema(
-                    id=tc["id"],
-                    name=tc["function"]["name"],
-                    arguments=args
-                ))
+                if name:
+                    tool_calls.append(ToolCallSchema(
+                        id=tc.get("id", "call_1"),
+                        name=name,
+                        arguments=args if isinstance(args, dict) else {}
+                    ))
                 
             executor = ToolExecutor()
             updated_ui_actions = executor.execute(tool_calls)
@@ -74,6 +77,7 @@ def process_chat(request: ChatMessageRequest, db: Session = Depends(get_db)):
         return {"status": "success", "data": response_data.model_dump()}
 
     except Exception as e:
+        print("CHAT ROUTE EXCEPTION DETECTED:", type(e), e, flush=True)
         logger.error(f"Error processing chat: {e}", exc_info=True)
         return {
             "status": "error", 
