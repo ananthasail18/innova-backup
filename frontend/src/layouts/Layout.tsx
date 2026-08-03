@@ -1,9 +1,21 @@
+import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { FloatingChatWidget } from '@/components/FloatingChatWidget';
+import { useSession } from '@/hooks/SessionContext';
+import { useUser } from '@/services/queries';
 
 export function Layout() {
   const location = useLocation();
   const isSplashPage = location.pathname === '/' || location.pathname === '/welcome';
+  const { userId, setUserId } = useSession();
+  const { isError: userError } = useUser(userId);
+
+  useEffect(() => {
+    if (userError) {
+      console.warn("Invalid user session detected. Clearing session.");
+      setUserId(null);
+    }
+  }, [userError, setUserId]);
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary/30">
