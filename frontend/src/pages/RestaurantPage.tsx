@@ -145,6 +145,16 @@ function RestaurantPageInner() {
           >
             My Taste Profile
           </button>
+          <button 
+            onClick={() => {
+              setUserId(null);
+              navigate('/');
+            }}
+            className="px-4 py-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 text-sm font-semibold rounded-full transition-colors"
+            title="Log Out & Restart Demo"
+          >
+            Logout
+          </button>
         </div>
       </div>
 
