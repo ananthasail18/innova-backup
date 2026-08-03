@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from './api';
 import type { 
   Restaurant, Category, Dish, ApiResponse, 
@@ -154,6 +154,24 @@ export const useChatMutation = () => {
     }) => {
       const { data } = await api.post<ApiResponse<any>>('/chat', payload);
       return data.data;
+    },
+  });
+};
+
+export const useSubmitFeedback = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: {
+      user_id: string;
+      event_type: string;
+      dimension_deltas: Record<string, number>;
+      event_description: string;
+    }) => {
+      const { data } = await api.post<ApiResponse<any>>('/taste-dna/feedback', payload);
+      return data.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['tasteProfile', variables.user_id] });
     },
   });
 };
