@@ -9,7 +9,7 @@
 - [x] Removed duplicate and legacy code modules (`app/core`, `app/api`, `app/seed`, `shared/`, `features/`).
 
 ### 2. Backend & Recommendation Engine
-- [x] Standardized 8-dimensional Taste Profile vectors (`Spice`, `Sweetness`, `Creaminess`, `Tanginess`, `Smokiness`, `Crunch`, `Adventure`, `Portion`).
+- [x] Standardized 8-dimensional Taste Profile vectors (`Spice`, `Sweetness`, `Creaminess`, `Tanginess`, `Masala Intensity`, `Crunch`, `Oiliness`, `Saltiness`).
 - [x] Implemented deterministic Euclidean distance and cosine similarity matching algorithm.
 - [x] Built rule-based explainability reason engine.
 - [x] Migrated Pydantic models to `model_config = ConfigDict(from_attributes=True)`.

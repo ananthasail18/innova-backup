@@ -1,6 +1,6 @@
 from typing import Optional, List
 from decimal import Decimal
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict
 
 class DishBase(BaseModel):
     name: str
@@ -16,12 +16,11 @@ class DishBase(BaseModel):
     spice_level: float = 0.5
     sweetness_level: float = 0.5
     creaminess_level: float = 0.5
-    tanginess_level: float = 0.5
-    smokiness_level: float = 0.5
-    crunchiness_level: float = 0.5
-    adventure_level: float = 0.5
-    portion_size: float = 0.5
-
+    tanginess_level: float = Field(0.5, ge=0.0, le=1.0)
+    masala_intensity_level: float = Field(0.5, ge=0.0, le=1.0)
+    crunchiness_level: float = Field(0.5, ge=0.0, le=1.0)
+    oiliness_level: float = Field(0.5, ge=0.0, le=1.0)
+    saltiness_level: float = Field(0.5, ge=0.0, le=1.0)
     ingredients: List[str] = []
     allergens: List[str] = []
     dietary_tags: List[str] = []

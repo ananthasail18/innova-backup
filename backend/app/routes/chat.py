@@ -2,10 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.schemas.chat import ChatMessageRequest, ChatResponse, ToolCallSchema
-from app.ai.prompts.gemini_provider import GeminiProvider
-from app.ai.prompts.context_builder import ContextBuilder
-from app.ai.prompts.prompt_builder import PromptBuilder
-from app.ai.prompts.tools import get_tool_definitions, ToolExecutor
+from app.ai.providers.gemini import GeminiProvider
+from app.ai.context.builder import ContextBuilder
+from app.ai.prompt.builder import PromptBuilder
+from app.ai.tools.definitions import get_tool_definitions
+from app.ai.tools.executor import ToolExecutor
 import logging
 
 logger = logging.getLogger(__name__)
@@ -20,7 +21,8 @@ def process_chat(request: ChatMessageRequest, db: Session = Depends(get_db)):
             user_id=request.user_id,
             restaurant_id=request.restaurant_id,
             page_context=request.page_context,
-            selected_dish_id=request.selected_dish_id
+            selected_dish_id=request.selected_dish_id,
+            query=request.message
         )
         
         # 2. Build Prompt
@@ -45,11 +47,18 @@ def process_chat(request: ChatMessageRequest, db: Session = Depends(get_db)):
         updated_ui_actions = []
         
         if llm_response.get("tool_calls"):
+            import json
             for tc in llm_response["tool_calls"]:
+                args = tc["function"]["arguments"]
+                if isinstance(args, str):
+                    try:
+                        args = json.loads(args)
+                    except Exception:
+                        args = {}
                 tool_calls.append(ToolCallSchema(
                     id=tc["id"],
                     name=tc["function"]["name"],
-                    arguments=tc["function"]["arguments"]
+                    arguments=args
                 ))
                 
             executor = ToolExecutor()
@@ -74,3 +83,5 @@ def process_chat(request: ChatMessageRequest, db: Session = Depends(get_db)):
                 updated_ui_actions=[]
             ).model_dump()
         }
+
+

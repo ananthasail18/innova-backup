@@ -14,13 +14,16 @@ class TasteProfile(Base):
     sweetness_preference = Column(Float, default=0.5)
     creaminess_preference = Column(Float, default=0.5)
     tanginess_preference = Column(Float, default=0.5)
-    smokiness_preference = Column(Float, default=0.5)
+    masala_intensity_preference = Column(Float, default=0.5)
     crunch_preference = Column(Float, default=0.5)
-    adventure_level = Column(Float, default=0.5)
-    portion_preference = Column(Float, default=0.5)
+    oiliness_preference = Column(Float, default=0.5)
+    saltiness_preference = Column(Float, default=0.5)
     
     confidence_score = Column(Float, default=0.0)
     onboarding_completed = Column(Boolean, default=False)
+    
+    from sqlalchemy.dialects.sqlite import JSON
+    dna_matrix_json = Column(JSON, nullable=True)
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

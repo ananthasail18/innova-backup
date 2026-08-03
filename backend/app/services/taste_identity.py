@@ -8,9 +8,9 @@ BASELINE = 0.5
 # question_id -> { option_id -> [(dimension, delta)] }
 QUIZ_MAPPING: Dict[str, Dict[str, List[Tuple[str, float]]]] = {
     "q_paneer_butter": {
-        "opt_too_spicy": [("spice_preference", -0.2), ("creaminess_preference", 0.1)],
-        "opt_just_right": [("spice_preference", 0.1), ("creaminess_preference", 0.2)],
-        "opt_too_mild": [("spice_preference", 0.3), ("creaminess_preference", -0.1)]
+        "opt_too_spicy": [("spice_preference", -0.3)],
+        "opt_just_right": [("spice_preference", 0.1)],
+        "opt_too_mild": [("spice_preference", 0.4)]
     },
     "q_desserts": {
         "opt_never": [("sweetness_preference", -0.3)],
@@ -18,9 +18,9 @@ QUIZ_MAPPING: Dict[str, Dict[str, List[Tuple[str, float]]]] = {
         "opt_always": [("sweetness_preference", 0.4)]
     },
     "q_gobi_manchurian": {
-        "opt_mild": [("spice_preference", -0.2), ("crunch_preference", 0.1)],
+        "opt_mild": [("spice_preference", -0.1), ("crunch_preference", 0.1)],
         "opt_medium": [("spice_preference", 0.1), ("crunch_preference", 0.2)],
-        "opt_spicy": [("spice_preference", 0.4), ("crunch_preference", 0.3)]
+        "opt_spicy": [("spice_preference", 0.3), ("crunch_preference", 0.3)]
     },
     "q_adventure": {
         "opt_familiar": [("adventure_level", -0.3)],
@@ -30,7 +30,7 @@ QUIZ_MAPPING: Dict[str, Dict[str, List[Tuple[str, float]]]] = {
     "q_sauce": {
         "opt_rich_cheesy": [("creaminess_preference", 0.4), ("tanginess_preference", -0.1)],
         "opt_zesty_tangy": [("tanginess_preference", 0.4), ("creaminess_preference", -0.1)],
-        "opt_smoky_bbq": [("smokiness_preference", 0.4), ("tanginess_preference", 0.1)]
+        "opt_smoky_bbq": [("smokiness_preference", 0.3), ("tanginess_preference", 0.1)]
     },
     "q_crunch": {
         "opt_not_really": [("crunch_preference", -0.3)],

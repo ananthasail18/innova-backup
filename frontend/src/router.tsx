@@ -4,8 +4,11 @@ import { LandingPage } from '@/pages/LandingPage';
 import { QuizPage } from '@/pages/QuizPage';
 import { RestaurantPage } from '@/pages/RestaurantPage';
 import { DishDetailPage } from '@/pages/DishDetailPage';
-import { ProfilePage } from '@/pages/ProfilePage';
+import { TasteDNADashboard } from '@/pages/TasteDNADashboard';
 import { CartPage } from '@/pages/CartPage';
+import { QrScannerPage } from '@/pages/QrScannerPage';
+import { DemoQrPage } from '@/pages/DemoQrPage';
+import { AdminRagPage } from '@/pages/AdminRagPage';
 
 export const router = createBrowserRouter([
   {
@@ -16,9 +19,14 @@ export const router = createBrowserRouter([
       { path: 'welcome', element: <LandingPage /> },
       { path: 'quiz', element: <QuizPage /> },
       { path: 'restaurant', element: <RestaurantPage /> },
+      { path: 'restaurant/:slug', element: <RestaurantPage /> },
       { path: 'dish/:id', element: <DishDetailPage /> },
-      { path: 'profile', element: <ProfilePage /> },
+      { path: 'profile', element: <TasteDNADashboard /> },
+      { path: 'taste-dna', element: <TasteDNADashboard /> },
       { path: 'cart', element: <CartPage /> },
+      { path: 'scanner', element: <QrScannerPage /> },
+      { path: 'demo', element: <DemoQrPage /> },
+      { path: 'admin/rag', element: <AdminRagPage /> },
     ],
   },
 ]);

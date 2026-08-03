@@ -1,70 +1,106 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSession } from '@/hooks/SessionContext';
-import { useCreateUser, useTasteProfile } from '@/services/queries';
+import { useCreateUser, useLoginUser, useRestaurant, useUser, useTasteProfile } from '@/services/queries';
 import { ErrorState } from '@/components/ErrorState';
-import { Sparkles, UtensilsCrossed } from 'lucide-react';
 
 export function LandingPage() {
   const navigate = useNavigate();
   const { userId, setUserId } = useSession();
   const createUser = useCreateUser();
-  const { data: tasteProfile, isLoading: isProfileLoading, isError: isProfileError } = useTasteProfile(userId);
+  const loginUser = useLoginUser();
+  const { data: restaurant, isLoading, isError, refetch } = useRestaurant();
 
+  const { data: user, isError: userError } = useUser(userId);
+  const { data: profile, isError: profileError } = useTasteProfile(userId);
+
+  const [loginInput, setLoginInput] = useState('');
+
+  // If user already exists in DB and has a profile, skip onboarding and go straight to restaurant
   useEffect(() => {
-    if (!userId && !createUser.isPending && !createUser.isSuccess && !createUser.isError) {
+    if (userError) {
+      setUserId(null); // Invalid session, clear it
+    } else if (userId && user && restaurant) {
+      if (profile) {
+        navigate(`/restaurant/${restaurant.slug}`);
+      } else if (profileError) {
+        // User exists but has no profile, must have dropped off during quiz
+        navigate(`/quiz?restaurant=${restaurant.slug}`);
+      }
+    }
+  }, [userId, user, userError, profile, profileError, restaurant, navigate, setUserId]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (isError || !restaurant) {
+    return <ErrorState message="Failed to load restaurant information." onRetry={refetch} />;
+  }
+
+  const handleGetStarted = () => {
+    if (loginInput.trim()) {
+      loginUser.mutate(loginInput.trim(), {
+        onSuccess: (user) => {
+          setUserId(user.id);
+          // After setting userId, the useEffect will handle navigation
+        }
+      });
+    } else {
       createUser.mutate(
         { name: 'Guest' },
         {
           onSuccess: (user) => {
             setUserId(user.id);
+            navigate(`/quiz?restaurant=${restaurant.slug}`);
           },
         }
       );
     }
-  }, [userId, createUser, setUserId]);
-
-  const handleStart = () => {
-    if (tasteProfile?.onboarding_completed) {
-      navigate('/restaurant');
-    } else {
-      navigate('/quiz');
-    }
   };
-
-  const handleReset = () => {
-    setUserId(null);
-    window.location.reload();
-  };
-
-  if (createUser.isError || isProfileError) {
-    return <ErrorState message="Failed to initialize session. Click below to start over." onRetry={handleReset} />;
-  }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground p-6 text-center">
-      <div className="max-w-md w-full space-y-8 animate-fade-in">
-        <div className="space-y-4">
-          <div className="inline-flex items-center justify-center p-4 bg-primary/10 text-primary rounded-3xl mb-2">
-            <UtensilsCrossed className="w-12 h-12" />
+    <div className="flex flex-col min-h-screen">
+      <div className="relative flex-1 flex flex-col justify-center overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url('${restaurant.cover_image || restaurant.hero_image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80'}')` }}
+        />
+        <div className="absolute inset-0 bg-black/60" />
+        
+        <div className="relative z-10 w-full max-w-2xl mx-auto p-6 md:p-10 text-center text-white space-y-8">
+          <div className="space-y-4">
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
+              {restaurant.name}
+            </h1>
+            <p className="text-xl md:text-2xl text-white/90">
+              Discover your perfect dish.
+            </p>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
-            Taste<span className="text-primary">AI</span>
-          </h1>
-          <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
-            Your personalized AI dining assistant that curates menu recommendations tailored strictly to your taste vectors.
-          </p>
+          
+          <div className="pt-8 max-w-sm mx-auto space-y-4">
+            <input
+              type="text"
+              placeholder="Email or Name (Optional)"
+              value={loginInput}
+              onChange={(e) => setLoginInput(e.target.value)}
+              className="w-full px-6 py-4 rounded-full text-foreground bg-background/95 backdrop-blur border border-border focus:outline-none focus:ring-2 focus:ring-primary shadow-lg"
+            />
+            <button
+              onClick={handleGetStarted}
+              disabled={createUser.isPending || loginUser.isPending}
+              className="w-full px-8 py-4 bg-primary text-primary-foreground text-lg font-bold rounded-full hover:bg-primary/90 transition-transform hover:scale-105 shadow-xl disabled:opacity-50"
+            >
+              {createUser.isPending || loginUser.isPending ? 'Loading...' : (loginInput.trim() ? 'Login' : 'Continue as Guest')}
+            </button>
+          </div>
         </div>
-
-        <button
-          onClick={handleStart}
-          disabled={createUser.isPending || isProfileLoading}
-          className="w-full py-4 px-6 bg-primary text-primary-foreground font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors disabled:opacity-50"
-        >
-          <Sparkles className="w-5 h-5" />
-          <span>{tasteProfile?.onboarding_completed ? 'View Menu & Recommendations' : 'Take Taste Identity Quiz'}</span>
-        </button>
       </div>
     </div>
   );
 }
+

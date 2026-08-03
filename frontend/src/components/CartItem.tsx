@@ -3,6 +3,7 @@ import { PriceTag } from '@/components/PriceTag';
 import { VegIndicator } from '@/components/VegIndicator';
 import { useCart } from '@/hooks/CartContext';
 import { Plus, Minus, Trash2 } from 'lucide-react';
+import { DishImage } from '@/components/DishImage';
 
 export function CartItem({ item }: { item: CartItemType }) {
   const { updateQuantity, removeItem } = useCart();
@@ -10,11 +11,9 @@ export function CartItem({ item }: { item: CartItemType }) {
   return (
     <div className="flex items-center justify-between p-4 bg-card border border-border rounded-2xl gap-4">
       <div className="flex items-center gap-3 flex-1 min-w-0">
-        {item.dish.image_url ? (
-          <img src={item.dish.image_url} alt={item.dish.name} className="w-16 h-16 object-cover rounded-xl shrink-0" />
-        ) : (
-          <div className="w-16 h-16 bg-muted rounded-xl flex items-center justify-center text-xs shrink-0">No Image</div>
-        )}
+        <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0">
+          <DishImage src={item.dish.image_url} alt={item.dish.name} className="w-full h-full object-cover" />
+        </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h4 className="font-bold text-sm truncate">{item.dish.name}</h4>

@@ -15,3 +15,12 @@ class UserRepository:
 
     def get_by_id(self, user_id: str) -> User:
         return self.db.query(User).filter(User.id == user_id).first()
+
+    def get_by_email_or_name(self, identifier: str) -> User:
+        clean = identifier.strip().lower()
+        return self.db.query(User).filter(
+            (User.email.ilike(clean)) | (User.name.ilike(clean)) | (User.id == identifier)
+        ).first()
+
+    def get_all(self, limit: int = 20):
+        return self.db.query(User).order_by(User.created_at.desc()).limit(limit).all()

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSession } from '@/hooks/SessionContext';
 import { useSubmitQuiz } from '@/services/queries';
 import { QuizCard } from '@/components/QuizCard';
@@ -9,7 +9,7 @@ import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 const QUIZ_QUESTIONS = [
   {
     id: 'q_paneer_butter',
-    text: "When eating Paneer Butter Masala or Chicken Tikka Masala, what's your reaction to the spice?",
+    text: "What is the level of spice you usually prefer?",
     options: [
       { id: 'opt_too_spicy', text: "Too spicy, I need water!" },
       { id: 'opt_just_right', text: "Just right, perfectly balanced flavor." },
@@ -83,6 +83,8 @@ const QUIZ_QUESTIONS = [
 
 export function QuizPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const restaurantSlug = searchParams.get('restaurant') || 'spice-symphony';
   const { userId } = useSession();
   const submitQuiz = useSubmitQuiz();
 
@@ -111,7 +113,7 @@ export function QuizPage() {
         { user_id: userId, answers: formattedAnswers },
         {
           onSuccess: () => {
-            navigate('/restaurant');
+            navigate(`/restaurant/${restaurantSlug}`);
           },
         }
       );
@@ -135,7 +137,7 @@ export function QuizPage() {
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <span className="text-sm font-bold tracking-wider text-muted-foreground uppercase">Taste Identity</span>
+          <span className="text-sm font-bold tracking-wider text-muted-foreground uppercase">Taste DNA Onboarding</span>
           <div className="w-9" />
         </div>
 
@@ -155,7 +157,7 @@ export function QuizPage() {
       >
         {currentIndex === QUIZ_QUESTIONS.length - 1 ? (
           <>
-            <span>Complete Profile</span>
+            <span>Establish Taste DNA</span>
             <Check className="w-5 h-5" />
           </>
         ) : (

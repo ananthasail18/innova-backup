@@ -1,4 +1,4 @@
-from app.ai.prompts.prompt_builder import PromptBuilder
+from app.ai.prompt.builder import PromptBuilder
 
 def test_prompt_builder():
     builder = PromptBuilder()

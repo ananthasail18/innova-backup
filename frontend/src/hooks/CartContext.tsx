@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useState, useMemo, useEffect, useRef, type ReactNode } from 'react';
 import type { Dish, CartItem } from '@/services/types';
+import { useRestaurantContext } from '@/hooks/RestaurantContext';
 
 interface CartContextType {
   items: CartItem[];
@@ -14,7 +15,34 @@ interface CartContextType {
 export const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { restaurant } = useRestaurantContext();
   const [items, setItems] = useState<CartItem[]>([]);
+  const loadedRestaurantRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (restaurant?.id) {
+      const storedCart = localStorage.getItem(`tasteai_cart_${restaurant.id}`);
+      if (storedCart) {
+        try {
+          setItems(JSON.parse(storedCart));
+        } catch (e) {
+          setItems([]);
+        }
+      } else {
+        setItems([]);
+      }
+      loadedRestaurantRef.current = restaurant.id;
+    } else {
+      setItems([]);
+      loadedRestaurantRef.current = null;
+    }
+  }, [restaurant?.id]);
+
+  useEffect(() => {
+    if (restaurant?.id && loadedRestaurantRef.current === restaurant.id) {
+      localStorage.setItem(`tasteai_cart_${restaurant.id}`, JSON.stringify(items));
+    }
+  }, [items, restaurant?.id]);
 
   const addItem = (dish: Dish, quantity = 1) => {
     setItems((prev) => {

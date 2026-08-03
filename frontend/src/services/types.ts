@@ -13,12 +13,13 @@ export interface TasteProfile {
   sweetness_preference: number;
   creaminess_preference: number;
   tanginess_preference: number;
-  smokiness_preference: number;
+  masala_intensity_preference: number;
   crunch_preference: number;
-  adventure_level: number;
-  portion_preference: number;
+  oiliness_preference: number;
+  saltiness_preference: number;
   confidence_score: number;
   onboarding_completed: boolean;
+  dna_matrix?: any;
   created_at: string;
   updated_at: string;
 }
@@ -36,9 +37,19 @@ export interface QuizSubmission {
 export interface Restaurant {
   id: string;
   name: string;
+  slug: string;
   description?: string;
   logo_url?: string;
+  logo?: string;
   theme_color?: string;
+  primary_color?: string;
+  secondary_color?: string;
+  hero_image?: string;
+  cover_image?: string;
+  city?: string;
+  cuisine?: string;
+  opening_hours?: string;
+  price_range?: string;
   created_at: string;
 }
 
@@ -66,10 +77,10 @@ export interface Dish {
   sweetness_level: number;
   creaminess_level: number;
   tanginess_level: number;
-  smokiness_level: number;
+  masala_intensity_level: number;
   crunchiness_level: number;
-  adventure_level: number;
-  portion_size: number;
+  oiliness_level: number;
+  saltiness_level: number;
   
   // JSON arrays
   ingredients: string[];
@@ -130,3 +141,22 @@ export interface ChatResponse {
     payload: any;
   }[];
 }
+
+export interface RestaurantDetail {
+  restaurant: Restaurant;
+  menu: Dish[];
+  categories: Category[];
+  theme: {
+    primary_color: string | null;
+    secondary_color: string | null;
+  };
+  metadata: {
+    city: string | null;
+    cuisine: string | null;
+    description: string | null;
+    opening_hours: string | null;
+    price_range: string | null;
+  };
+  recommendations?: DishRecommendation[];
+}
+

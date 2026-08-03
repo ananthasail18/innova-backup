@@ -42,16 +42,16 @@ def test_get_taste_vector():
     
     mock_dish = MockDish(
         spice_level=0.1, sweetness_level=0.2, creaminess_level=0.3,
-        tanginess_level=0.4, smokiness_level=0.5, crunchiness_level=0.6,
-        adventure_level=0.7, portion_size=0.8
+        tanginess_level=0.4, masala_intensity_level=0.5, crunchiness_level=0.6,
+        oiliness_level=0.7, saltiness_level=0.8
     )
     vec = service._get_taste_vector(mock_dish)
     assert vec == [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
 
     mock_profile = MockTasteProfile(
         spice_preference=0.8, sweetness_preference=0.7, creaminess_preference=0.6,
-        tanginess_preference=0.5, smokiness_preference=0.4, crunch_preference=0.3,
-        adventure_level=0.2, portion_preference=0.1
+        tanginess_preference=0.5, masala_intensity_preference=0.4, crunch_preference=0.3,
+        oiliness_preference=0.2, saltiness_preference=0.1
     )
     vec2 = service._get_taste_vector(mock_profile)
     assert vec2 == [0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]

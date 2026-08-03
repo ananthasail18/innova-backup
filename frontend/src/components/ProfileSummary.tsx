@@ -16,7 +16,7 @@ export function ProfileSummary({ user, profile }: { user: User; profile: TastePr
 
       <div className="flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full font-bold text-sm">
         <Sparkles className="w-4 h-4" />
-        <span>Confidence Score: {Math.round(profile.confidence_score * 100)}%</span>
+        <span>Taste DNA Confidence: {Math.round(profile.confidence_score * 100)}%</span>
       </div>
     </div>
   );

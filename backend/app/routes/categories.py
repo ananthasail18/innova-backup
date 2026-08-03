@@ -8,13 +8,20 @@ from app.middleware.responses import success_response, ResponseEnvelope
 
 router = APIRouter()
 
+from typing import Optional
+
 @router.get("/categories", response_model=ResponseEnvelope[list[CategoryOut]])
-def get_categories(db: Session = Depends(get_db)):
-    rest_repo = RestaurantRepository(db)
-    restaurant = rest_repo.get_first()
-    if not restaurant:
-        raise HTTPException(status_code=404, detail="Restaurant not found")
+def get_categories(restaurant_id: Optional[str] = None, db: Session = Depends(get_db)):
+    target_restaurant_id = restaurant_id
+    if not target_restaurant_id:
+        rest_repo = RestaurantRepository(db)
+        restaurant = rest_repo.get_first()
+        if not restaurant:
+            raise HTTPException(status_code=404, detail="Restaurant not found")
+        target_restaurant_id = restaurant.id
     
     cat_repo = CategoryRepository(db)
-    categories = cat_repo.get_all_by_restaurant(restaurant.id)
+    categories = cat_repo.get_all_by_restaurant(target_restaurant_id)
     return success_response(data=categories)
+
+

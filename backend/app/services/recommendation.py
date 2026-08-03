@@ -29,10 +29,10 @@ class RecommendationService:
             float(obj.sweetness_preference if hasattr(obj, 'sweetness_preference') else obj.sweetness_level),
             float(obj.creaminess_preference if hasattr(obj, 'creaminess_preference') else obj.creaminess_level),
             float(obj.tanginess_preference if hasattr(obj, 'tanginess_preference') else obj.tanginess_level),
-            float(obj.smokiness_preference if hasattr(obj, 'smokiness_preference') else obj.smokiness_level),
+            float(obj.masala_intensity_preference if hasattr(obj, 'masala_intensity_preference') else obj.masala_intensity_level),
             float(obj.crunch_preference if hasattr(obj, 'crunch_preference') else obj.crunchiness_level),
-            float(obj.adventure_level),
-            float(obj.portion_preference if hasattr(obj, 'portion_preference') else obj.portion_size)
+            float(obj.oiliness_preference if hasattr(obj, 'oiliness_preference') else obj.oiliness_level),
+            float(obj.saltiness_preference if hasattr(obj, 'saltiness_preference') else obj.saltiness_level)
         ]
 
     def _get_community_score(self, user_id: str, dish_id: str, user_taste_vector: List[float]) -> float:
@@ -72,7 +72,7 @@ class RecommendationService:
             
         return score_sum / weight_sum
 
-    def get_recommendations(self, user_id: str) -> RecommendationResponse:
+    def get_recommendations(self, user_id: str, restaurant_id: str = None) -> RecommendationResponse:
         user_profile = self.db.query(TasteProfile).filter(TasteProfile.user_id == user_id).first()
         if not user_profile:
             # Fallback to neutral vector if no profile
@@ -82,7 +82,10 @@ class RecommendationService:
             user_vector = self._get_taste_vector(user_profile)
             confidence = float(user_profile.confidence_score)
 
-        dishes = self.db.query(Dish).filter(Dish.is_available == True).all()
+        query = self.db.query(Dish).filter(Dish.is_available == True)
+        if restaurant_id:
+            query = query.filter(Dish.restaurant_id == restaurant_id)
+        dishes = query.all()
         
         recommendations = []
         for dish in dishes:
@@ -128,3 +131,4 @@ class RecommendationService:
         recommendations.sort(key=lambda x: x.score, reverse=True)
         
         return RecommendationResponse(user_id=user_id, recommendations=recommendations)
+

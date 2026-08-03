@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { ThemeContext } from '@/hooks/ThemeContext';
 import { CartProvider } from '@/hooks/CartContext';
 import { SessionProvider } from '@/hooks/SessionContext';
+import { RestaurantProvider } from '@/hooks/RestaurantContext';
 
 const queryClient = new QueryClient();
 
@@ -12,9 +13,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
         <ThemeContext.Provider value={{ theme, setTheme }}>
-          <CartProvider>
-            {children}
-          </CartProvider>
+          <RestaurantProvider>
+            <CartProvider>
+              {children}
+            </CartProvider>
+          </RestaurantProvider>
         </ThemeContext.Provider>
       </SessionProvider>
     </QueryClientProvider>

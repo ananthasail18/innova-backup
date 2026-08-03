@@ -7,3 +7,7 @@ class RestaurantRepository:
 
     def get_first(self) -> Restaurant | None:
         return self.db.query(Restaurant).first()
+
+    def get_by_slug(self, slug: str) -> Restaurant | None:
+        return self.db.query(Restaurant).filter(Restaurant.slug == slug).first()
+

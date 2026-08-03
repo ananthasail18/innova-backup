@@ -20,9 +20,10 @@ backend/app/
 ├── services/                   # Business logic (taste_identity, recommendation engine)
 ├── ai/                         # AI & Vector Engine
 │   ├── recommendation/         # Similarity and ranking algorithms
-│   ├── embeddings/             # Vector space operations
-│   ├── vector_store/           # Vector storage
-│   └── prompts/                # LLM Providers (Gemini, Nvidia), Context Builder, Prompt Builder, Tool Definitions & Executor
+│   ├── context/                # Context Builder
+│   ├── prompt/                 # Prompt Builder
+│   ├── providers/              # LLM Providers (Gemini)
+│   └── tools/                  # Tool Definitions & Executor
 ├── ingestion/                  # Database seeding and data ingestion scripts
 └── utils/                      # Helper utilities
 ```
@@ -39,7 +40,9 @@ frontend/src/
 │   ├── RestaurantPage.tsx
 │   ├── DishDetailPage.tsx
 │   ├── ProfilePage.tsx
-│   └── CartPage.tsx
+│   ├── CartPage.tsx
+│   ├── DemoQrPage.tsx
+│   └── QrScannerPage.tsx
 ├── components/                 # UI & Feature components
 │   ├── AvailabilityBadge.tsx
 │   ├── CartItem.tsx
@@ -48,6 +51,7 @@ frontend/src/
 │   ├── ChatWindow.tsx
 │   ├── DishCard.tsx
 │   ├── DishGrid.tsx
+│   ├── DishImage.tsx
 │   ├── EmptyState.tsx
 │   ├── ErrorState.tsx
 │   ├── FloatingChatWidget.tsx
@@ -79,6 +83,7 @@ frontend/src/
 ├── utils/                      # Helper utilities
 │   └── cn.ts
 ├── assets/                     # Static images and icons
+│   └── qr/                     # Generated Decodable restaurant QR code PNGs
 └── styles/                     # Stylesheets
     ├── index.css
     └── App.css

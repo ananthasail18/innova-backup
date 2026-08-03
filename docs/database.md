@@ -41,10 +41,10 @@ erDiagram
         float sweetness_level
         float creaminess_level
         float tanginess_level
-        float smokiness_level
+        float masala_intensity_level
         float crunchiness_level
-        float adventure_level
-        float portion_size
+        float oiliness_level
+        float saltiness_level
         json ingredients
         json allergens
         json dietary_tags
@@ -63,10 +63,10 @@ erDiagram
         float sweetness_preference
         float creaminess_preference
         float tanginess_preference
-        float smokiness_preference
+        float masala_intensity_preference
         float crunch_preference
-        float adventure_level
-        float portion_preference
+        float oiliness_preference
+        float saltiness_preference
         float confidence_score
         boolean onboarding_completed
     }
@@ -110,7 +110,7 @@ erDiagram
 - `is_vegetarian`: `Boolean`, Vegetarian indicator.
 - `is_available`: `Boolean`, Availability status.
 - **8 Flavor Vectors** (`Float`, Range `0.0` - `1.0`):
-  - `spice_level`, `sweetness_level`, `creaminess_level`, `tanginess_level`, `smokiness_level`, `crunchiness_level`, `adventure_level`, `portion_size`.
+  - `spice_level`, `sweetness_level`, `creaminess_level`, `tanginess_level`, `masala_intensity_level`, `crunchiness_level`, `oiliness_level`, `saltiness_level`.
 - **JSON Metadata**:
   - `ingredients` (`JSON` array of strings), `allergens` (`JSON` array of strings), `dietary_tags` (`JSON` array of strings).
 
@@ -123,7 +123,7 @@ erDiagram
 - `id`: `String(36)`, Primary Key UUID.
 - `user_id`: `String(36)`, Foreign Key -> `users.id`, Unique index.
 - **8 Flavor Preference Vectors** (`Float`, Range `0.0` - `1.0`):
-  - `spice_preference`, `sweetness_preference`, `creaminess_preference`, `tanginess_preference`, `smokiness_preference`, `crunch_preference`, `adventure_level`, `portion_preference`.
+  - `spice_preference`, `sweetness_preference`, `creaminess_preference`, `tanginess_preference`, `masala_intensity_preference`, `crunch_preference`, `oiliness_preference`, `saltiness_preference`.
 - `confidence_score`: `Float`, Score confidence metric (range `0.0` - `1.0`).
 - `onboarding_completed`: `Boolean`, Status flag for quiz onboarding.
 

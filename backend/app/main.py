@@ -31,6 +31,8 @@ def create_app() -> FastAPI:
     from app.routes.recommendations import router as recommendations_router
     from app.routes.community import router as community_router
     from app.routes.chat import router as chat_router
+    from app.routes.rag import router as rag_router
+    from app.routes.knowledge import router as knowledge_router
     
     app.include_router(health_router, prefix="", tags=["health"])
     app.include_router(restaurant_router, prefix=settings.API_V1_STR, tags=["restaurant"])
@@ -41,6 +43,8 @@ def create_app() -> FastAPI:
     app.include_router(recommendations_router, prefix=settings.API_V1_STR, tags=["recommendations"])
     app.include_router(community_router, prefix=settings.API_V1_STR, tags=["community"])
     app.include_router(chat_router, prefix=settings.API_V1_STR, tags=["chat"])
+    app.include_router(rag_router, prefix=settings.API_V1_STR + "/rag", tags=["rag"])
+    app.include_router(knowledge_router, prefix=settings.API_V1_STR, tags=["knowledge"])
     
     logger.info("Application startup complete.")
 

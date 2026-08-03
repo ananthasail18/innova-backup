@@ -24,13 +24,13 @@ export function ProfilePage() {
 
   const dimensions = [
     { label: 'spice', value: profile.spice_preference },
+    { label: 'saltiness', value: profile.saltiness_preference },
     { label: 'sweetness', value: profile.sweetness_preference },
-    { label: 'creaminess', value: profile.creaminess_preference },
     { label: 'tanginess', value: profile.tanginess_preference },
-    { label: 'smokiness', value: profile.smokiness_preference },
+    { label: 'creaminess', value: profile.creaminess_preference },
+    { label: 'oiliness', value: profile.oiliness_preference },
+    { label: 'masala_intensity', value: profile.masala_intensity_preference },
     { label: 'crunch', value: profile.crunch_preference },
-    { label: 'adventure', value: profile.adventure_level },
-    { label: 'portion', value: profile.portion_preference },
   ];
 
   return (

@@ -1,4 +1,4 @@
-from app.ai.prompts.context_builder import ContextBuilder
+from app.ai.context.builder import ContextBuilder
 from app.models.restaurant import Restaurant
 
 class MockQuery:
@@ -18,7 +18,7 @@ class MockDB:
         return MockQuery([])
 
 def test_context_builder_basic(mocker):
-    mocker.patch('app.ai.prompts.context_builder.RecommendationService.get_recommendations', return_value=type('Response', (), {'recommendations': []})())
+    mocker.patch('app.ai.context.builder.RecommendationService.get_recommendations', return_value=type('Response', (), {'recommendations': []})())
     
     db = MockDB()
     builder = ContextBuilder(db)

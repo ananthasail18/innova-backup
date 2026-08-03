@@ -54,7 +54,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
           }
 
           if (data.updated_ui_actions) {
-            data.updated_ui_actions.forEach((uiAction) => {
+            data.updated_ui_actions.forEach((uiAction: { action: string; payload: any }) => {
               if (uiAction.action === 'NAVIGATE' && uiAction.payload?.path) {
                 navigate(uiAction.payload.path);
               } else if (uiAction.action === 'ADD_TO_CART' && uiAction.payload?.dish_id) {

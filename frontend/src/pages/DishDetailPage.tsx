@@ -10,6 +10,7 @@ import { AvailabilityBadge } from '@/components/AvailabilityBadge';
 import { ArrowLeft, Plus, Star } from 'lucide-react';
 import { CartSummary } from '@/components/CartSummary';
 import { RecommendationReasonList } from '@/components/RecommendationReasonList';
+import { DishImage } from '@/components/DishImage';
 
 export function DishDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -39,15 +40,11 @@ export function DishDetailPage() {
 
       <main className="flex-1 max-w-3xl mx-auto w-full">
         <div className="w-full aspect-[4/3] sm:aspect-[16/9] bg-muted">
-          {dish.image_url ? (
-            <img 
-              src={dish.image_url} 
-              alt={dish.name} 
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-muted-foreground">No Image</div>
-          )}
+          <DishImage 
+            src={dish.image_url} 
+            alt={dish.name} 
+            className="w-full h-full object-cover"
+          />
         </div>
         
         <div className="p-6 space-y-6">
@@ -83,25 +80,41 @@ export function DishDetailPage() {
               <h3 className="text-lg font-bold text-foreground">Dish Flavor Profile</h3>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { label: 'Spice', value: dish.spice_level },
-                  { label: 'Sweetness', value: dish.sweetness_level },
-                  { label: 'Creaminess', value: dish.creaminess_level },
-                  { label: 'Tanginess', value: dish.tanginess_level },
-                  { label: 'Smokiness', value: dish.smokiness_level },
-                  { label: 'Crunch', value: dish.crunchiness_level },
-                  { label: 'Adventure', value: dish.adventure_level },
-                  { label: 'Portion Size', value: dish.portion_size },
+                  { label: 'Spice', value: dish.spice_level, key: 'spice' },
+                  { label: 'Saltiness', value: dish.saltiness_level, key: 'saltiness' },
+                  { label: 'Sweetness', value: dish.sweetness_level, key: 'sweetness' },
+                  { label: 'Tanginess', value: dish.tanginess_level, key: 'tanginess' },
+                  { label: 'Creaminess', value: dish.creaminess_level, key: 'creaminess' },
+                  { label: 'Oiliness', value: dish.oiliness_level, key: 'oiliness' },
+                  { label: 'Masala Intensity', value: dish.masala_intensity_level, key: 'masala' },
+                  { label: 'Crunch', value: dish.crunchiness_level, key: 'crunch' },
                 ].map((dim) => {
                   const percentage = Math.round(dim.value * 100);
+                  let qualitativeLabel = "Medium";
+                  if (dim.key === 'masala') {
+                    qualitativeLabel = dim.value < 0.35 ? "Light Masala" : dim.value < 0.70 ? "Medium Masala" : "Rich Masala";
+                  } else if (dim.key === 'oiliness') {
+                    qualitativeLabel = dim.value < 0.35 ? "Light" : dim.value < 0.70 ? "Moderate" : "Rich";
+                  } else if (dim.key === 'spice') {
+                    qualitativeLabel = dim.value < 0.30 ? "Low" : dim.value < 0.65 ? "Medium" : "High";
+                  } else if (dim.key === 'creaminess') {
+                    qualitativeLabel = dim.value < 0.35 ? "Light" : dim.value < 0.70 ? "Creamy" : "Very Creamy";
+                  } else {
+                    qualitativeLabel = dim.value < 0.30 ? "Low" : dim.value < 0.70 ? "Medium" : "High";
+                  }
+
                   return (
                     <div key={dim.label} className="bg-card border border-border p-3.5 rounded-2xl flex flex-col gap-2">
                       <div className="flex justify-between items-center text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                         <span>{dim.label}</span>
-                        <span>{percentage}%</span>
+                        <div className="flex items-center gap-1">
+                          <span className="text-primary font-bold">{qualitativeLabel}</span>
+                          <span className="opacity-70">({percentage}%)</span>
+                        </div>
                       </div>
-                      <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                      <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-primary rounded-full transition-all duration-1000 ease-out" 
+                          className="h-full bg-primary rounded-full transition-all duration-500" 
                           style={{ width: `${percentage}%` }}
                         />
                       </div>

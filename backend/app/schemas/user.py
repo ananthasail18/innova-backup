@@ -15,3 +15,6 @@ class UserOut(UserBase):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+class UserLoginRequest(BaseModel):
+    email_or_name: str

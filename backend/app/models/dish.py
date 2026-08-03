@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, Text, Numeric, Boolean, Integer, ForeignKey
+from sqlalchemy import Column, String, Float, Text, Numeric, Boolean, Integer, DateTime, func, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database.base import Base
 
@@ -21,11 +21,11 @@ class Dish(Base):
     spice_level = Column(Numeric(4, 3), default=0.5)
     sweetness_level = Column(Numeric(4, 3), default=0.5)
     creaminess_level = Column(Numeric(4, 3), default=0.5)
-    tanginess_level = Column(Numeric(4, 3), default=0.5)
-    smokiness_level = Column(Numeric(4, 3), default=0.5)
-    crunchiness_level = Column(Numeric(4, 3), default=0.5)
-    adventure_level = Column(Numeric(4, 3), default=0.5)
-    portion_size = Column(Numeric(4, 3), default=0.5)
+    tanginess_level = Column(Float, default=0.5)
+    masala_intensity_level = Column(Float, default=0.5)
+    crunchiness_level = Column(Float, default=0.5)
+    oiliness_level = Column(Float, default=0.5)
+    saltiness_level = Column(Float, default=0.5)
 
     # JSON Metadata
     from sqlalchemy.dialects.sqlite import JSON
