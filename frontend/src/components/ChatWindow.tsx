@@ -5,11 +5,13 @@ import { useChatMutation, useDishes } from '@/services/queries';
 import type { ChatMessage } from '@/services/types';
 import { Send, Bot, User, X, Loader2 } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useRestaurantContext } from '@/hooks/RestaurantContext';
 
 export function ChatWindow({ onClose }: { onClose: () => void }) {
   const { userId } = useSession();
   const { addItem } = useCart();
   const { data: dishes } = useDishes();
+  const { restaurant } = useRestaurantContext();
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
@@ -41,7 +43,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
     chatMutation.mutate(
       {
         user_id: userId,
-        restaurant_id: 'restaurant_1',
+        restaurant_id: restaurant?.id || 'restaurant_1',
         message: currentInput,
         conversation_history: messages,
         page_context: location.pathname,
