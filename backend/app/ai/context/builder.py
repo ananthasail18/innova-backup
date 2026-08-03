@@ -23,7 +23,7 @@ class ContextBuilder:
         user_profile = self.db.query(TasteProfile).filter(TasteProfile.user_id == user_id).first()
         
         rec_service = RecommendationService(self.db)
-        recs_response = rec_service.get_recommendations(user_id)
+        recs_response = rec_service.get_recommendations(user_id, restaurant_id)
         
         # Format the menu
         menu_text = ""
