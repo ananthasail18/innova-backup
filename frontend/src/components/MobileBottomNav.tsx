@@ -3,7 +3,11 @@ import { NavLink } from 'react-router-dom';
 import { Utensils, Sparkles, QrCode, ShoppingBag, Store } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 
-export const MobileBottomNav: React.FC = () => {
+interface MobileBottomNavProps {
+  isPhoneFrame?: boolean;
+}
+
+export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ isPhoneFrame = false }) => {
   const { totalItems } = useCart();
 
   const navItems = [
@@ -14,10 +18,14 @@ export const MobileBottomNav: React.FC = () => {
     { to: '/cart', icon: ShoppingBag, label: 'Cart', badgeCount: totalItems },
   ];
 
+  const positionClass = isPhoneFrame 
+    ? 'absolute bottom-0 left-0 right-0 z-40' 
+    : 'fixed bottom-0 left-0 right-0 z-40';
+
   return (
     <nav 
       aria-label="Mobile Navigation" 
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-neutral-950/95 backdrop-blur-md border-t border-neutral-800/80 shadow-2xl pb-[env(safe-area-inset-bottom)]"
+      className={`${positionClass} bg-neutral-950/95 backdrop-blur-md border-t border-neutral-800/80 shadow-2xl pb-[env(safe-area-inset-bottom)]`}
     >
       <div className="flex items-center justify-around h-16 px-1">
         {navItems.map((item) => {
