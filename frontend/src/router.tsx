@@ -9,6 +9,7 @@ import { CartPage } from '@/pages/CartPage';
 import { QrScannerPage } from '@/pages/QrScannerPage';
 import { DemoQrPage } from '@/pages/DemoQrPage';
 import { AdminRagPage } from '@/pages/AdminRagPage';
+import { ZomatoOverlayPage } from '@/pages/ZomatoOverlayPage';
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
       { path: 'cart', element: <CartPage /> },
       { path: 'scanner', element: <QrScannerPage /> },
       { path: 'demo', element: <DemoQrPage /> },
+      { path: 'zomato', element: <ZomatoOverlayPage /> },
       { path: 'admin/rag', element: <AdminRagPage /> },
     ],
   },

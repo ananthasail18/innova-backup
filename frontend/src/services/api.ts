@@ -6,8 +6,32 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
+/**
+ * Dynamically resolves the API base URL depending on environment:
+ * - Environment variable VITE_API_BASE_URL
+ * - Android Emulator host (10.0.2.2)
+ * - Localhost / Network IP host (port 8001)
+ */
+const resolveApiBaseUrl = (): string => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname === '10.0.2.2') {
+      return 'http://10.0.2.2:8001/api/v1';
+    }
+    if (hostname) {
+      return `http://${hostname}:8001/api/v1`;
+    }
+  }
+
+  return 'http://localhost:8001/api/v1';
+};
+
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8002/api/v1',
+  baseURL: resolveApiBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },

@@ -134,6 +134,14 @@ class TasteDNALearningService:
         profile = self.get_or_create_dna(user_id)
         matrix = TasteDNAMatrix(**profile.dna_matrix_json)
         
+        # Synchronize matrix values with flat DB columns if out-of-sync (e.g. from seed files)
+        for dim, pref_col in DIMENSION_MAP.items():
+            db_val = getattr(profile, pref_col)
+            if db_val is not None:
+                matrix_dim = getattr(matrix, dim)
+                if abs(matrix_dim.value - db_val) > 0.001:
+                    matrix_dim.value = db_val
+        
         weight = LEARNING_WEIGHTS.get(event_type, 0.20)
         alpha = round(weight * 0.25, 3)  # Smoothing factor (e.g. 0.06 - 0.10)
         today = datetime.utcnow().strftime("%Y-%m-%d")

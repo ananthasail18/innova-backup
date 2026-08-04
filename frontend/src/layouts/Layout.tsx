@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { FloatingChatWidget } from '@/components/FloatingChatWidget';
+import { MobileBottomNav } from '@/components/MobileBottomNav';
 import { useSession } from '@/hooks/SessionContext';
 import { useUser } from '@/services/queries';
 
@@ -18,12 +19,15 @@ export function Layout() {
   }, [userError, setUserId]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary/30">
-      <main className="w-full min-h-screen bg-background relative overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary/30 pb-16 md:pb-0">
+      <main className="w-full min-h-screen bg-background relative overflow-x-hidden pt-[env(safe-area-inset-top)]">
         <Outlet />
         
         {!isSplashPage && <FloatingChatWidget />}
       </main>
+
+      {/* Sticky Mobile Bottom Navigation Bar */}
+      <MobileBottomNav />
     </div>
   );
 }

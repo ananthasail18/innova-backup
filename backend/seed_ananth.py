@@ -48,6 +48,7 @@ def seed_ananth():
         profile.crunch_preference = 0.80
         profile.oiliness_preference = 0.90
         profile.saltiness_preference = 0.60
+        profile.dna_matrix_json = None
         db.commit()
         print("Updated existing Taste DNA profile for Ananth with real data!")
 
