@@ -9,7 +9,7 @@ import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ErrorState';
 import { CartSummary } from '@/components/CartSummary';
 import { RecommendationCarousel } from '@/components/RecommendationCarousel';
-import { Sparkles, Star } from 'lucide-react';
+import { Sparkles, Star, QrCode, Store, Building2 } from 'lucide-react';
 
 export function RestaurantPage() {
   return <RestaurantPageInner />;
@@ -88,37 +88,86 @@ function RestaurantPageInner() {
     ? menu.filter(d => d.category_id === activeCategoryId)
     : menu;
 
+  const demoRestaurants = [
+    { name: 'Rameshwaram', slug: 'rameshwaram-cafe' },
+    { name: 'Truffles', slug: 'truffles' },
+    { name: 'Spice Symphony', slug: 'spice-symphony' },
+  ];
+
   return (
     <div className={`flex flex-col min-h-screen bg-neutral-950 text-neutral-100 pb-24 transition-all duration-500 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       
-      {/* Compact Top Restaurant Bar (Replaces Giant Hero Banner) */}
-      <div className="bg-neutral-900/90 border-b border-neutral-800 px-4 py-2.5 flex items-center justify-between z-20 shrink-0">
-        <div className="flex items-center gap-2.5">
-          {restaurant.logo ? (
-            <img src={restaurant.logo} alt={restaurant.name} className="w-7 h-7 rounded-full object-cover border border-neutral-700" />
-          ) : (
-            <div className="w-7 h-7 rounded-full bg-orange-500/20 text-orange-400 font-bold text-xs flex items-center justify-center">
-              {restaurant.name[0]}
-            </div>
-          )}
-          <div>
-            <h1 className="font-extrabold text-sm text-white tracking-tight leading-none">{restaurant.name}</h1>
-            <div className="text-[10px] text-neutral-400 flex items-center gap-1 mt-0.5">
-              <span className="text-emerald-400 font-bold flex items-center gap-0.5">
-                <Star className="w-3 h-3 fill-emerald-400" /> 4.8
-              </span>
-              <span>• {restaurant.cuisine || 'Authentic Food'}</span>
+      {/* Top Restaurant Bar & Quick Multi-Restaurant Switcher */}
+      <div className="bg-neutral-900/95 backdrop-blur-md border-b border-neutral-800 px-4 py-2.5 space-y-2 z-20 shrink-0">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            {restaurant.logo ? (
+              <img src={restaurant.logo} alt={restaurant.name} className="w-7 h-7 rounded-full object-cover border border-neutral-700" />
+            ) : (
+              <div className="w-7 h-7 rounded-full bg-orange-500/20 text-orange-400 font-bold text-xs flex items-center justify-center">
+                {restaurant.name[0]}
+              </div>
+            )}
+            <div>
+              <h1 className="font-extrabold text-sm text-white tracking-tight leading-none">{restaurant.name}</h1>
+              <div className="text-[10px] text-neutral-400 flex items-center gap-1 mt-0.5">
+                <span className="text-emerald-400 font-bold flex items-center gap-0.5">
+                  <Star className="w-3 h-3 fill-emerald-400" /> 4.8
+                </span>
+                <span>• {restaurant.cuisine || 'Authentic Food'}</span>
+              </div>
             </div>
           </div>
+
+          <button
+            onClick={() => navigate('/profile')}
+            className="flex items-center gap-1 bg-gradient-to-r from-orange-600 to-amber-600 text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow-md hover:scale-105 transition-all"
+          >
+            <Sparkles className="w-3 h-3 text-yellow-300 fill-yellow-300" />
+            <span>8D Taste DNA</span>
+          </button>
         </div>
 
-        <button
-          onClick={() => navigate('/quiz')}
-          className="flex items-center gap-1 bg-orange-500/15 border border-orange-500/30 text-orange-400 text-[11px] font-extrabold px-2.5 py-1 rounded-full hover:bg-orange-500/20 transition-all"
-        >
-          <Sparkles className="w-3 h-3 text-orange-400" />
-          <span>8D Taste DNA</span>
-        </button>
+        {/* Quick Action Pills: Multi-Restaurant Switcher + Shortcuts */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-0.5 pt-1 no-scrollbar text-xs">
+          <span className="text-[10px] uppercase font-bold text-neutral-500 shrink-0 flex items-center gap-1">
+            <Building2 className="w-3 h-3" /> Switch:
+          </span>
+          
+          {demoRestaurants.map((r) => (
+            <button
+              key={r.slug}
+              onClick={() => {
+                setRestaurantSlug(r.slug);
+                navigate(`/restaurant/${r.slug}`);
+              }}
+              className={`px-2.5 py-0.5 rounded-full text-[11px] font-extrabold shrink-0 transition-all ${
+                restaurant.slug === r.slug
+                  ? 'bg-orange-500 text-white shadow-sm'
+                  : 'bg-neutral-800/80 text-neutral-400 hover:text-white border border-neutral-700/50'
+              }`}
+            >
+              {r.name}
+            </button>
+          ))}
+
+          <div className="w-[1px] h-4 bg-neutral-800 shrink-0 mx-1" />
+
+          {/* Quick Feature Shortcuts */}
+          <button
+            onClick={() => navigate('/zomato')}
+            className="flex items-center gap-1 bg-red-600/20 border border-red-500/40 text-red-400 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0"
+          >
+            <Store className="w-3 h-3" /> Zomato AI
+          </button>
+
+          <button
+            onClick={() => navigate('/scanner')}
+            className="flex items-center gap-1 bg-neutral-800 border border-neutral-700 text-neutral-300 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0"
+          >
+            <QrCode className="w-3 h-3" /> Scan QR
+          </button>
+        </div>
       </div>
 
       {/* Start Directly with Recommendations */}
