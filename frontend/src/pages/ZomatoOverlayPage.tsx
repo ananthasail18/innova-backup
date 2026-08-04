@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ZomatoDishBadge } from '@/components/ZomatoDishBadge';
-import { Sparkles, ArrowLeft, Star, Clock, MapPin, Search, ShoppingCart, CheckCircle } from 'lucide-react';
+import { Sparkles, ArrowLeft, Star, Clock, MapPin, Search, ShoppingCart, CheckCircle, Flame, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/hooks/useCart';
 import type { Dish } from '@/services/types';
@@ -15,6 +15,7 @@ interface SimulatedZomatoDish {
   reason: string;
   isVeg: boolean;
   image: string;
+  bestseller?: boolean;
 }
 
 const SAMPLE_ZOMATO_DISHES: SimulatedZomatoDish[] = [
@@ -28,6 +29,7 @@ const SAMPLE_ZOMATO_DISHES: SimulatedZomatoDish[] = [
     reason: 'High Spice (8.5/10) & Crunchy Texture matches your Taste DNA perfectly.',
     isVeg: true,
     image: '/images/dishes/spicy_noodles.jpg',
+    bestseller: true,
   },
   {
     id: 'zomato-2',
@@ -39,6 +41,7 @@ const SAMPLE_ZOMATO_DISHES: SimulatedZomatoDish[] = [
     reason: 'Matches your Creaminess (7/10) & Masala preference.',
     isVeg: false,
     image: '/images/dishes/burger.jpg',
+    bestseller: true,
   },
   {
     id: 'zomato-3',
@@ -61,6 +64,7 @@ const SAMPLE_ZOMATO_DISHES: SimulatedZomatoDish[] = [
     reason: 'Rich Creaminess & Tangy tomato notes.',
     isVeg: false,
     image: '/images/dishes/butter_chicken.jpg',
+    bestseller: true,
   },
   {
     id: 'zomato-5',
@@ -130,32 +134,33 @@ export const ZomatoOverlayPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans pb-24">
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans pb-28">
+      
       {/* Top Zomato + TasteAI Header Banner */}
-      <header className="sticky top-0 z-30 bg-neutral-900/95 backdrop-blur-md border-b border-neutral-800 px-4 py-3 shadow-lg">
+      <header className="sticky top-0 z-30 bg-neutral-900/95 backdrop-blur-xl border-b border-neutral-800/80 px-3 py-2.5 shadow-xl">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button 
             onClick={() => navigate(-1)} 
-            className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors"
+            className="flex items-center gap-1.5 text-neutral-400 hover:text-white transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm font-medium">Back</span>
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-xs font-semibold">Back</span>
           </button>
 
           {/* TasteAI Active Badge */}
-          <div className="flex items-center gap-2 bg-gradient-to-r from-orange-600 to-red-600 px-3 py-1 rounded-full text-white text-xs font-bold shadow-md shadow-orange-950/50 animate-pulse">
-            <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
-            <span>TasteAI Active over Zomato</span>
+          <div className="flex items-center gap-1.5 bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 px-3 py-1 rounded-full text-white text-[11px] font-extrabold shadow-md shadow-orange-950/50 animate-pulse">
+            <Sparkles className="w-3.5 h-3.5 text-yellow-300 fill-yellow-300" />
+            <span>TasteAI Active • Zomato Gold</span>
           </div>
 
           {/* Cart Icon Shortcut */}
           <button 
             onClick={() => navigate('/cart')} 
-            className="relative p-2 text-neutral-300 hover:text-white"
+            className="relative p-1.5 text-neutral-300 hover:text-white"
           >
             <ShoppingCart className="w-5 h-5" />
             {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">
+              <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full min-w-[16px] text-center shadow-md">
                 {totalItems}
               </span>
             )}
@@ -163,48 +168,55 @@ export const ZomatoOverlayPage: React.FC = () => {
         </div>
       </header>
 
-      {/* Simulated Zomato Restaurant Hero Section */}
-      <section className="bg-neutral-900 border-b border-neutral-800 py-6 px-4">
+      {/* Simulated Zomato Partner Restaurant Hero Banner */}
+      <section className="bg-gradient-to-b from-neutral-900 via-neutral-900/90 to-neutral-950 border-b border-neutral-800/80 py-5 px-4">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-red-500 uppercase tracking-wider mb-1">
-              <span>Zomato Partner Restaurant</span>
-            </div>
-            <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">Truffles — Koramangala</h1>
-            <p className="text-neutral-400 text-sm mt-1">Burgers, Indo-Chinese, Fast Food, Desserts</p>
-            <div className="flex items-center gap-4 text-xs text-neutral-400 mt-3">
-              <span className="flex items-center gap-1 text-emerald-400 font-bold bg-emerald-950/80 border border-emerald-800/50 px-2 py-0.5 rounded-md">
-                <Star className="w-3.5 h-3.5 fill-emerald-400" /> 4.6 (12.4k+ ratings)
+            <div className="flex items-center gap-2 mb-1">
+              <span className="bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider">
+                ZOMATO GOLD PARTNER
               </span>
-              <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> 25-30 mins</span>
-              <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> 1.8 km</span>
+              <span className="text-xs text-neutral-400 font-medium">• Koramangala 5th Block</span>
+            </div>
+            <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+              <span>Truffles</span>
+              <Flame className="w-5 h-5 text-orange-500 fill-orange-500" />
+            </h1>
+            <p className="text-neutral-400 text-xs mt-1">American Burgers, Indo-Chinese, Fast Food, Sundaes</p>
+            
+            <div className="flex items-center gap-3 text-xs text-neutral-400 mt-3">
+              <span className="flex items-center gap-1 text-emerald-400 font-bold bg-emerald-950/90 border border-emerald-800/60 px-2 py-0.5 rounded-lg shadow-sm">
+                <Star className="w-3.5 h-3.5 fill-emerald-400" /> 4.6 (14.8k+)
+              </span>
+              <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-neutral-500" /> 25 mins</span>
+              <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-neutral-500" /> 1.8 km</span>
             </div>
           </div>
 
-          {/* Taste DNA Quick Banner */}
-          <div className="bg-neutral-950/80 border border-orange-500/30 rounded-xl p-3.5 flex items-center gap-3">
-            <div className="p-2 bg-orange-500/20 rounded-lg text-orange-400">
-              <Sparkles className="w-6 h-6" />
+          {/* Taste DNA Active Match Card */}
+          <div className="bg-neutral-900/90 border border-orange-500/30 rounded-2xl p-3.5 flex items-center gap-3 shadow-lg shadow-orange-950/20 backdrop-blur-md">
+            <div className="p-2.5 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl text-white shadow-md">
+              <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs text-neutral-400">Target Diner Profile</div>
-              <div className="text-sm font-bold text-orange-400">Ananth's Taste DNA (8D)</div>
-              <div className="text-[11px] text-neutral-400">Spice: High | Crunch: High | Salt: Med</div>
+              <div className="text-[10px] uppercase tracking-wider text-orange-400 font-bold">Matching Diner DNA</div>
+              <div className="text-sm font-black text-white">Ananth's Taste Profile</div>
+              <div className="text-[10px] text-neutral-400 mt-0.5">High Spice • High Crunch • Creamy Gravy</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Category Tabs & Search Bar */}
-      <section className="max-w-4xl mx-auto px-4 py-4 space-y-3">
-        <div className="flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2">
+      <section className="max-w-4xl mx-auto px-4 py-3 space-y-3">
+        <div className="flex items-center gap-2 bg-neutral-900/90 border border-neutral-800 rounded-xl px-3 py-2 shadow-inner">
           <Search className="w-4 h-4 text-neutral-500" />
           <input
             type="text"
             placeholder="Search Zomato menu items..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent text-sm text-neutral-200 placeholder-neutral-500 outline-none w-full"
+            className="bg-transparent text-xs text-neutral-200 placeholder-neutral-500 outline-none w-full"
           />
         </div>
 
@@ -214,9 +226,9 @@ export const ZomatoOverlayPage: React.FC = () => {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
                 selectedCategory === cat
-                  ? 'bg-orange-500 text-white shadow-md shadow-orange-950'
+                  ? 'bg-orange-500 text-white shadow-md shadow-orange-950 scale-105'
                   : 'bg-neutral-900 text-neutral-400 border border-neutral-800 hover:text-neutral-200'
               }`}
             >
@@ -226,42 +238,50 @@ export const ZomatoOverlayPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Simulated Zomato Menu List with TasteAI Overlays */}
-      <main className="max-w-4xl mx-auto px-4 space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+      {/* Zomato Menu List with Taste DNA Badges */}
+      <main className="max-w-4xl mx-auto px-4 space-y-3">
+        <div className="flex items-center justify-between pt-1">
+          <h2 className="text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-1.5">
             <span>Recommended Menu Items</span>
-            <span className="text-xs font-normal text-neutral-500">({filteredDishes.length} items)</span>
+            <span className="text-xs text-neutral-500">({filteredDishes.length})</span>
           </h2>
-          <span className="text-xs text-orange-400 font-medium">Sorted by Taste DNA Match</span>
+          <span className="text-[11px] text-orange-400 font-bold">Sorted by Taste DNA</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {filteredDishes.map((dish) => (
             <div 
               key={dish.id} 
-              className="bg-neutral-900/90 border border-neutral-800 hover:border-neutral-700 rounded-2xl p-4 flex flex-col justify-between gap-3 relative overflow-hidden transition-all shadow-lg"
+              className="bg-neutral-900/80 border border-neutral-800/90 hover:border-orange-500/40 rounded-2xl p-3.5 flex flex-col justify-between gap-2.5 relative overflow-hidden transition-all shadow-md backdrop-blur-sm"
             >
-              {/* Veg / Non-Veg Indicator */}
+              {/* Veg / Non-Veg Indicator & Bestseller Tag */}
               <div className="flex items-start justify-between gap-2">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className={`w-3.5 h-3.5 border flex items-center justify-center p-0.5 ${dish.isVeg ? 'border-emerald-500' : 'border-red-500'}`}>
+                    <span className={`w-3.5 h-3.5 border flex items-center justify-center p-0.5 rounded-sm ${dish.isVeg ? 'border-emerald-500' : 'border-red-500'}`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${dish.isVeg ? 'bg-emerald-500' : 'bg-red-500'}`} />
                     </span>
-                    <h3 className="font-bold text-base text-neutral-100">{dish.name}</h3>
+                    <h3 className="font-extrabold text-sm text-neutral-100">{dish.name}</h3>
                   </div>
-                  <div className="text-sm font-extrabold text-orange-400">₹{dish.price}</div>
+                  
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-black text-orange-400">₹{dish.price}</span>
+                    {dish.bestseller && (
+                      <span className="text-[9px] font-black bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.2 rounded uppercase">
+                        ★ BESTSELLER
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Taste DNA Match Pill Badge */}
                 <ZomatoDishBadge matchPercentage={dish.matchScore} size="sm" />
               </div>
 
-              <p className="text-xs text-neutral-400 line-clamp-2">{dish.description}</p>
+              <p className="text-[11px] text-neutral-400 line-clamp-2 leading-relaxed">{dish.description}</p>
 
-              {/* Taste Recommendation Rationale Note */}
-              <div className="bg-neutral-950/60 border border-neutral-800/60 rounded-lg p-2 text-[11px] text-neutral-300 flex items-start gap-1.5">
+              {/* Taste Rationale Note */}
+              <div className="bg-neutral-950/80 border border-neutral-800/80 rounded-xl p-2 text-[10px] text-neutral-300 flex items-start gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-orange-400 shrink-0 mt-0.5" />
                 <span>{dish.reason}</span>
               </div>
@@ -270,10 +290,10 @@ export const ZomatoOverlayPage: React.FC = () => {
               <div className="flex items-center justify-end pt-1">
                 <button
                   onClick={() => handleAddToCart(dish)}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  className={`px-4 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all shadow-md ${
                     addedItemIds[dish.id]
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-orange-500 hover:bg-orange-600 text-white shadow-md'
+                      ? 'bg-emerald-600 text-white shadow-emerald-950'
+                      : 'bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white shadow-orange-950 active:scale-95'
                   }`}
                 >
                   {addedItemIds[dish.id] ? (
@@ -282,7 +302,7 @@ export const ZomatoOverlayPage: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      ADD +
+                      <Plus className="w-3.5 h-3.5" /> ADD
                     </>
                   )}
                 </button>

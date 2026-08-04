@@ -18,16 +18,16 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ isPhoneFrame =
     { to: '/cart', icon: ShoppingBag, label: 'Cart', badgeCount: totalItems },
   ];
 
-  const positionClass = isPhoneFrame 
-    ? 'absolute bottom-0 left-0 right-0 z-40' 
-    : 'fixed bottom-0 left-0 right-0 z-40';
+  const containerPosition = isPhoneFrame 
+    ? 'absolute bottom-2 left-3 right-3 z-40' 
+    : 'fixed bottom-2 left-3 right-3 max-w-lg mx-auto z-40';
 
   return (
     <nav 
-      aria-label="Mobile Navigation" 
-      className={`${positionClass} bg-neutral-950/95 backdrop-blur-md border-t border-neutral-800/80 shadow-2xl pb-[env(safe-area-inset-bottom)]`}
+      aria-label="Mobile Bottom Navigation" 
+      className={`${containerPosition} bg-neutral-900/90 backdrop-blur-xl border border-neutral-800/80 rounded-2xl shadow-[0_12px_32px_rgba(0,0,0,0.8)] px-2 py-1.5`}
     >
-      <div className="flex items-center justify-around h-16 px-1">
+      <div className="flex items-center justify-around h-14">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -35,22 +35,26 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ isPhoneFrame =
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `flex flex-col items-center justify-center flex-1 h-full py-1 text-[11px] font-medium transition-all duration-200 ${
+                `flex flex-col items-center justify-center flex-1 h-full py-1 text-[10px] font-bold rounded-xl transition-all duration-300 relative ${
                   isActive 
-                    ? 'text-orange-500 font-semibold scale-105' 
-                    : 'text-neutral-400 hover:text-neutral-200'
+                    ? 'text-orange-400 bg-orange-500/15 border border-orange-500/30 scale-105 shadow-inner' 
+                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/40'
                 }`
               }
             >
               <div className="relative">
-                <Icon className="w-5 h-5 mb-0.5" />
+                <Icon className="w-4 h-4 mb-0.5" />
+                
+                {/* Active Cart Counter Badge */}
                 {Boolean(item.badgeCount && item.badgeCount > 0) && (
-                  <span className="absolute -top-1.5 -right-2.5 bg-orange-500 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full min-w-[18px] text-center shadow-md animate-pulse">
+                  <span className="absolute -top-1.5 -right-2.5 bg-orange-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full min-w-[16px] text-center shadow-lg animate-pulse">
                     {item.badgeCount}
                   </span>
                 )}
+                
+                {/* Feature Tag Badge */}
                 {item.badgeText && !item.badgeCount && (
-                  <span className="absolute -top-1.5 -right-3 bg-red-600 text-white text-[9px] font-black px-1 rounded-full uppercase tracking-tighter shadow-sm">
+                  <span className="absolute -top-1.5 -right-3 bg-gradient-to-r from-red-600 to-orange-600 text-white text-[8px] font-black px-1 rounded-full uppercase tracking-tight shadow-md">
                     {item.badgeText}
                   </span>
                 )}
