@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSession } from '@/hooks/SessionContext';
-import { useSubmitQuiz } from '@/services/queries';
+import { useSubmitQuiz, useCreateUser } from '@/services/queries';
 import { QuizCard } from '@/components/QuizCard';
 import { ProgressIndicator } from '@/components/ProgressIndicator';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
@@ -84,9 +84,10 @@ const QUIZ_QUESTIONS = [
 export function QuizPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const restaurantSlug = searchParams.get('restaurant') || 'spice-symphony';
-  const { userId } = useSession();
+  const restaurantSlug = searchParams.get('restaurant') || 'rameshwaram-cafe';
+  const { userId, setUserId } = useSession();
   const submitQuiz = useSubmitQuiz();
+  const createUser = useCreateUser();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -98,25 +99,40 @@ export function QuizPage() {
     setAnswers((prev) => ({ ...prev, [currentQuestion.id]: optionId }));
   };
 
+  const executeSubmission = (targetUserId: string) => {
+    const formattedAnswers = Object.entries(answers).map(([qId, optId]) => ({
+      question_id: qId,
+      selected_option_id: optId,
+    }));
+
+    submitQuiz.mutate(
+      { user_id: targetUserId, answers: formattedAnswers },
+      {
+        onSuccess: () => {
+          navigate(`/restaurant/${restaurantSlug}`);
+        },
+      }
+    );
+  };
+
   const handleNext = () => {
     if (currentIndex < QUIZ_QUESTIONS.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      // Submit Quiz
-      if (!userId) return;
-      const formattedAnswers = Object.entries(answers).map(([qId, optId]) => ({
-        question_id: qId,
-        selected_option_id: optId,
-      }));
-
-      submitQuiz.mutate(
-        { user_id: userId, answers: formattedAnswers },
-        {
-          onSuccess: () => {
-            navigate(`/restaurant/${restaurantSlug}`);
-          },
-        }
-      );
+      // Submit Quiz - ensure user session exists
+      if (!userId) {
+        createUser.mutate(
+          { name: 'Guest User' },
+          {
+            onSuccess: (newUser) => {
+              setUserId(newUser.id);
+              executeSubmission(newUser.id);
+            },
+          }
+        );
+      } else {
+        executeSubmission(userId);
+      }
     }
   };
 
@@ -127,17 +143,17 @@ export function QuizPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background p-4 md:p-8 max-w-2xl mx-auto justify-between space-y-6">
+    <div className="flex flex-col min-h-screen bg-neutral-950 p-4 md:p-8 max-w-2xl mx-auto justify-between space-y-6 text-neutral-100">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <button
             onClick={handlePrev}
             disabled={currentIndex === 0}
-            className="p-2 rounded-full hover:bg-muted disabled:opacity-30 transition-colors"
+            className="p-2 rounded-full hover:bg-neutral-800 disabled:opacity-30 transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 text-neutral-300" />
           </button>
-          <span className="text-sm font-bold tracking-wider text-muted-foreground uppercase">Taste DNA Onboarding</span>
+          <span className="text-xs font-black tracking-wider text-orange-400 uppercase">Taste DNA Onboarding</span>
           <div className="w-9" />
         </div>
 
@@ -152,8 +168,8 @@ export function QuizPage() {
 
       <button
         onClick={handleNext}
-        disabled={!selectedOptionId || submitQuiz.isPending}
-        className="w-full py-4 px-6 bg-primary text-primary-foreground font-bold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
+        disabled={!selectedOptionId || submitQuiz.isPending || createUser.isPending}
+        className="w-full py-4 px-6 bg-gradient-to-r from-orange-500 to-amber-600 text-white font-extrabold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:from-orange-600 hover:to-amber-700 transition-all shadow-lg shadow-orange-950/50 active:scale-95"
       >
         {currentIndex === QUIZ_QUESTIONS.length - 1 ? (
           <>

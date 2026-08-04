@@ -60,10 +60,17 @@ export const useUser = (userId: string | null) => {
 };
 
 export const useSubmitQuiz = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (submission: QuizSubmission) => {
       const { data } = await api.post<ApiResponse<TasteProfile>>('/taste-profile', submission);
       return data.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['tasteProfile', variables.user_id] });
+      queryClient.invalidateQueries({ queryKey: ['tasteProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['recommendations'] });
+      queryClient.invalidateQueries({ queryKey: ['restaurant-detail'] });
     },
   });
 };
