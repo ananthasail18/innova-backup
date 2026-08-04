@@ -1,49 +1,98 @@
-import type { DishRecommendation } from '@/services/types';
+import type { DishRecommendation, Dish } from '@/services/types';
 import { PriceTag } from '@/components/PriceTag';
 import { VegIndicator } from '@/components/VegIndicator';
-import { Star } from 'lucide-react';
+import { Sparkles, Plus, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { DishImage } from '@/components/DishImage';
+import { useCart } from '@/hooks/useCart';
+import { useState } from 'react';
 
 export function RecommendationCarousel({ recommendations }: { recommendations: DishRecommendation[] }) {
   const navigate = useNavigate();
+  const { addItem } = useCart();
+  const [addedItemIds, setAddedItemIds] = useState<Record<string, boolean>>({});
 
   if (!recommendations || recommendations.length === 0) return null;
 
+  const handleAddToCart = (e: React.MouseEvent, dish: Dish) => {
+    e.stopPropagation();
+    addItem(dish, 1);
+    setAddedItemIds((prev) => ({ ...prev, [dish.id]: true }));
+    setTimeout(() => {
+      setAddedItemIds((prev) => ({ ...prev, [dish.id]: false }));
+    }, 1500);
+  };
+
   return (
-    <div className="w-full space-y-2.5 px-4 md:px-8 py-4 bg-gradient-to-b from-primary/5 to-transparent border-b border-border">
-      <div className="flex items-center gap-2">
-        <Star className="w-4 h-4 fill-primary text-primary" />
-        <h3 className="font-bold text-base md:text-lg">Top Recommended for You</h3>
+    <div className="w-full space-y-3 px-4 py-3 bg-gradient-to-b from-orange-500/10 via-neutral-950 to-neutral-950 border-b border-neutral-800/80">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="p-1.5 bg-orange-500/20 rounded-lg text-orange-400">
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="font-extrabold text-sm text-white tracking-tight">Top Recommended for You</h3>
+            <p className="text-[10px] text-neutral-400">Ranked by 8D Taste Vector Match</p>
+          </div>
+        </div>
       </div>
       
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 pt-1">
-        {recommendations.slice(0, 6).map(({ dish, score, reasons }) => (
+      {/* Horizontal Spaced Recommendation Scroll View */}
+      <div className="flex items-stretch gap-3.5 overflow-x-auto pb-2 pt-1 no-scrollbar">
+        {recommendations.slice(0, 8).map(({ dish, score, reasons }) => (
           <div
             key={dish.id}
             onClick={() => navigate(`/dish/${dish.id}`)}
-            className="w-full bg-card border border-border rounded-xl p-2.5 flex flex-col gap-1.5 cursor-pointer hover:border-primary/50 transition-all hover:scale-[1.01] shadow-sm"
+            className="w-[160px] shrink-0 bg-neutral-900/90 border border-neutral-800 hover:border-orange-500/40 rounded-2xl p-2.5 flex flex-col justify-between gap-2.5 cursor-pointer shadow-lg transition-all hover:scale-[1.02] active:scale-95"
           >
-            <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden bg-muted">
+            {/* Dish Image + Match Badge */}
+            <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-neutral-950 border border-neutral-800">
               <DishImage src={dish.image_url} alt={dish.name} className="w-full h-full object-cover" />
-              <span className="absolute top-1.5 right-1.5 bg-primary text-primary-foreground font-extrabold text-[10px] px-2 py-0.5 rounded-full shadow-md">
+              <span className="absolute top-1 right-1 bg-gradient-to-r from-orange-600 to-amber-600 text-white font-black text-[9px] px-1.5 py-0.5 rounded-full shadow-md">
                 {Math.round(score * 100)}% Match
               </span>
             </div>
             
-            <div className="flex justify-between items-start gap-1">
-              <h4 className="font-bold text-xs leading-tight line-clamp-1">{dish.name}</h4>
-              <VegIndicator isVegetarian={dish.is_vegetarian} />
+            {/* Title & Veg Indicator */}
+            <div className="space-y-1">
+              <div className="flex items-start justify-between gap-1">
+                <h4 className="font-extrabold text-xs text-white leading-snug line-clamp-2">{dish.name}</h4>
+                <div className="shrink-0 mt-0.5">
+                  <VegIndicator isVegetarian={dish.is_vegetarian} />
+                </div>
+              </div>
+
+              {reasons && reasons.length > 0 && (
+                <p className="text-[9px] text-neutral-400 line-clamp-1 italic">
+                  💡 {reasons[0].text}
+                </p>
+              )}
             </div>
 
-            {reasons && reasons.length > 0 && (
-              <p className="text-[10px] text-muted-foreground line-clamp-1 leading-none">
-                {reasons[0].text}
-              </p>
-            )}
+            {/* Price & Add Button */}
+            <div className="mt-auto flex items-center justify-between pt-1 border-t border-neutral-800/60">
+              <div className="font-extrabold text-xs text-orange-400">
+                <PriceTag price={dish.price} />
+              </div>
 
-            <div className="mt-auto pt-0.5 font-bold text-xs">
-              <PriceTag price={dish.price} />
+              <button
+                onClick={(e) => handleAddToCart(e, dish)}
+                className={`px-2.5 py-1 rounded-lg text-[10px] font-black flex items-center gap-1 transition-all shadow-md ${
+                  addedItemIds[dish.id]
+                    ? 'bg-emerald-600 text-white shadow-emerald-950'
+                    : 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-950'
+                }`}
+              >
+                {addedItemIds[dish.id] ? (
+                  <>
+                    <CheckCircle className="w-3 h-3" /> Added
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-3 h-3" /> ADD
+                  </>
+                )}
+              </button>
             </div>
           </div>
         ))}
