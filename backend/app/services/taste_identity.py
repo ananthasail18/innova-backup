@@ -7,45 +7,45 @@ BASELINE = 0.5
 # Delta mapping for quiz answers
 # question_id -> { option_id -> [(dimension, delta)] }
 QUIZ_MAPPING: Dict[str, Dict[str, List[Tuple[str, float]]]] = {
-    "q_paneer_butter": {
-        "opt_too_spicy": [("spice_preference", -0.3)],
-        "opt_just_right": [("spice_preference", 0.1)],
-        "opt_too_mild": [("spice_preference", 0.4)]
+    "q_spice": {
+        "opt_too_mild": [("spice_preference", -0.4)],
+        "opt_just_right": [("spice_preference", 0.0)],
+        "opt_too_spicy": [("spice_preference", 0.4)]
     },
-    "q_desserts": {
-        "opt_never": [("sweetness_preference", -0.3)],
-        "opt_sometimes": [("sweetness_preference", 0.1)],
+    "q_sweetness": {
+        "opt_never": [("sweetness_preference", -0.4)],
+        "opt_sometimes": [("sweetness_preference", 0.0)],
         "opt_always": [("sweetness_preference", 0.4)]
     },
-    "q_gobi_manchurian": {
-        "opt_mild": [("spice_preference", -0.1), ("crunch_preference", 0.1)],
-        "opt_medium": [("spice_preference", 0.1), ("crunch_preference", 0.2)],
-        "opt_spicy": [("spice_preference", 0.3), ("crunch_preference", 0.3)]
+    "q_creaminess": {
+        "opt_no_cream": [("creaminess_preference", -0.4)],
+        "opt_some_cream": [("creaminess_preference", 0.0)],
+        "opt_very_creamy": [("creaminess_preference", 0.4)]
     },
-    "q_adventure": {
-        "opt_familiar": [("adventure_level", -0.3)],
-        "opt_sometimes": [("adventure_level", 0.1)],
-        "opt_love_new": [("adventure_level", 0.4)]
+    "q_tanginess": {
+        "opt_no_tang": [("tanginess_preference", -0.4)],
+        "opt_some_tang": [("tanginess_preference", 0.0)],
+        "opt_very_tangy": [("tanginess_preference", 0.4)]
     },
-    "q_sauce": {
-        "opt_rich_cheesy": [("creaminess_preference", 0.4), ("tanginess_preference", -0.1)],
-        "opt_zesty_tangy": [("tanginess_preference", 0.4), ("creaminess_preference", -0.1)],
-        "opt_smoky_bbq": [("smokiness_preference", 0.3), ("tanginess_preference", 0.1)]
+    "q_masala": {
+        "opt_light_masala": [("masala_intensity_preference", -0.4)],
+        "opt_med_masala": [("masala_intensity_preference", 0.0)],
+        "opt_heavy_masala": [("masala_intensity_preference", 0.4)]
     },
     "q_crunch": {
-        "opt_not_really": [("crunch_preference", -0.3)],
-        "opt_okay": [("crunch_preference", 0.1)],
+        "opt_not_really": [("crunch_preference", -0.4)],
+        "opt_okay": [("crunch_preference", 0.0)],
         "opt_must_have": [("crunch_preference", 0.4)]
     },
-    "q_portion": {
-        "opt_light": [("portion_preference", -0.3)],
-        "opt_standard": [("portion_preference", 0.1)],
-        "opt_feast": [("portion_preference", 0.4)]
+    "q_oiliness": {
+        "opt_low_oil": [("oiliness_preference", -0.4)],
+        "opt_med_oil": [("oiliness_preference", 0.0)],
+        "opt_high_oil": [("oiliness_preference", 0.4)]
     },
-    "q_smoked": {
-        "opt_pass": [("smokiness_preference", -0.3)],
-        "opt_sounds_good": [("smokiness_preference", 0.1)],
-        "opt_need_it": [("smokiness_preference", 0.4)]
+    "q_saltiness": {
+        "opt_low_salt": [("saltiness_preference", -0.4)],
+        "opt_med_salt": [("saltiness_preference", 0.0)],
+        "opt_high_salt": [("saltiness_preference", 0.4)]
     }
 }
 
@@ -58,10 +58,10 @@ class TasteIdentityService:
             "sweetness_preference": BASELINE,
             "creaminess_preference": BASELINE,
             "tanginess_preference": BASELINE,
-            "smokiness_preference": BASELINE,
+            "masala_intensity_preference": BASELINE,
             "crunch_preference": BASELINE,
-            "adventure_level": BASELINE,
-            "portion_preference": BASELINE,
+            "oiliness_preference": BASELINE,
+            "saltiness_preference": BASELINE,
         }
         
         # Apply deltas based on answers

@@ -29,7 +29,7 @@ Additionally, diners can converse with an **AI Dining Assistant** built on Googl
 
 ## ✨ Features
 
-- **🎯 8-Dimensional Taste Identity Vector**: Quantifies preferences across `Spice`, `Sweetness`, `Creaminess`, `Tanginess`, `Smokiness`, `Crunch`, `Adventure`, and `Portion`.
+- **🎯 8-Dimensional Taste Identity Vector**: Quantifies preferences across `Spice`, `Sweetness`, `Creaminess`, `Tanginess`, `Masala`, `Crunch`, `Oiliness`, and `Saltiness`.
 - **⚡ Deterministic Recommendation Engine**: Uses weighted Euclidean distance & cosine similarity to rank dishes objectively without relying on LLM math.
 - **🤖 AI Dining Waiter (Google Gemini)**: Conversational assistant capable of answering dish queries and dispatching interactive UI actions (`NAVIGATE`, `HIGHLIGHT_DISH`, `ADD_TO_CART`).
 - **📱 High-Density Desktop Menu**: Clean responsive grid scaling up to **7 items per row** on desktop viewports.
@@ -65,7 +65,7 @@ Additionally, diners can converse with an **AI Dining Assistant** built on Googl
 
 ### Frontend
 - **Framework**: React 18 + Vite 6 + TypeScript 5
-- **Styling**: Tailwind CSS v4 (Custom dark mode palette `#0A0A0A` / `#171717` / `#F97316`)
+- **Styling**: Tailwind CSS v4 (Custom dark mode palette `#0A0A0A` / `#171717` / `#F97316`) utilizing **Native Container Queries** (`@container`) for perfectly responsive mobile-in-desktop chassis constraints.
 - **State & Async**: React Context API & TanStack React Query v5
 - **Icons**: Lucide React
 

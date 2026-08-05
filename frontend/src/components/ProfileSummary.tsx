@@ -3,7 +3,7 @@ import { User as UserIcon, Sparkles } from 'lucide-react';
 
 export function ProfileSummary({ user, profile }: { user: User; profile: TasteProfile }) {
   return (
-    <div className="bg-card border border-border p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+    <div className="bg-card border border-border p-6 rounded-2xl flex flex-col @md:flex-row items-center justify-between gap-4">
       <div className="flex items-center gap-4">
         <div className="p-3 bg-primary/10 text-primary rounded-2xl">
           <UserIcon className="w-8 h-8" />

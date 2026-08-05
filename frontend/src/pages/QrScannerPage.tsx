@@ -114,7 +114,7 @@ export function QrScannerPage() {
       <div className="absolute bottom-10 right-10 w-92 h-92 bg-accent/10 rounded-full blur-3xl" />
 
       {/* Main glass card container */}
-      <div className="w-full max-w-md bg-card/40 border border-border backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl relative z-10 flex flex-col items-center text-center space-y-6">
+      <div className="w-full max-w-md bg-card/40 border border-border backdrop-blur-md rounded-3xl p-6 @md:p-8 shadow-2xl relative z-10 flex flex-col items-center text-center space-y-6">
         <div className="flex items-center gap-2">
           <QrCode className="w-8 h-8 text-primary animate-pulse" />
           <h1 className="text-3xl font-extrabold tracking-tight">Taste<span className="text-primary">AI</span></h1>

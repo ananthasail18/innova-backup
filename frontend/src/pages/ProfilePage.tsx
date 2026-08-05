@@ -47,7 +47,7 @@ export function ProfilePage() {
         <div className="w-9" />
       </div>
 
-      <main className="flex-1 max-w-3xl mx-auto w-full p-4 md:p-6 space-y-6">
+      <main className="flex-1 max-w-3xl mx-auto w-full p-4 @md:p-6 space-y-6">
         <ProfileSummary user={user} profile={profile} />
 
         <div className="space-y-4">
@@ -62,7 +62,7 @@ export function ProfilePage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 @sm:grid-cols-2 gap-4">
             {dimensions.map((dim) => (
               <TasteDimensionCard key={dim.label} label={dim.label} value={dim.value} />
             ))}

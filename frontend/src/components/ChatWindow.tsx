@@ -79,7 +79,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="flex flex-col h-[500px] w-[350px] sm:w-[400px] bg-card border border-border rounded-3xl shadow-2xl overflow-hidden">
+    <div className="flex flex-col h-[500px] w-[350px] @sm:w-[400px] bg-card border border-border rounded-3xl shadow-2xl overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-border bg-muted/40">
         <div className="flex items-center gap-2.5">
@@ -103,7 +103,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
             <div className={`p-1.5 rounded-xl shrink-0 ${msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}>
               {msg.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
             </div>
-            <div className={`p-3 rounded-2xl text-xs sm:text-sm max-w-[80%] leading-relaxed ${
+            <div className={`p-3 rounded-2xl text-xs @sm:text-sm max-w-[80%] leading-relaxed ${
               msg.role === 'user' 
                 ? 'bg-primary text-primary-foreground rounded-tr-none font-medium' 
                 : 'bg-muted/70 text-foreground rounded-tl-none border border-border/40'
@@ -129,7 +129,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           placeholder="Ask for recommendations..."
-          className="flex-1 bg-muted px-4 py-2.5 text-xs sm:text-sm rounded-full border border-border focus:outline-none focus:border-primary text-foreground placeholder:text-muted-foreground"
+          className="flex-1 bg-muted px-4 py-2.5 text-xs @sm:text-sm rounded-full border border-border focus:outline-none focus:border-primary text-foreground placeholder:text-muted-foreground"
         />
         <button
           onClick={handleSend}

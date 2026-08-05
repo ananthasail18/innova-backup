@@ -81,9 +81,9 @@ export function TasteDNADashboard() {
         </button>
       </header>
 
-      <main className="flex-1 max-w-6xl mx-auto w-full p-4 md:p-8 space-y-8">
+      <main className="flex-1 max-w-6xl mx-auto w-full p-4 @md:p-8 space-y-8">
         {/* Portability Alert Banner */}
-        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 @md:p-6 flex flex-col @md:flex-row items-start @md:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
             <div className="p-2.5 bg-primary/10 text-primary rounded-xl mt-0.5">
               <ShieldCheck className="w-6 h-6" />
@@ -100,14 +100,14 @@ export function TasteDNADashboard() {
           </div>
           <button
             onClick={() => navigate('/quiz')}
-            className="text-xs font-bold text-primary hover:underline self-end md:self-center whitespace-nowrap"
+            className="text-xs font-bold text-primary hover:underline self-end @md:self-center whitespace-nowrap"
           >
             Retake Baseline Quiz →
           </button>
         </div>
 
         {/* Top KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 @sm:grid-cols-3 gap-4">
           <div className="bg-card border border-border p-5 rounded-2xl flex flex-col justify-between">
             <span className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Overall Completion</span>
             <div className="flex items-baseline gap-2 mt-2">
@@ -139,9 +139,9 @@ export function TasteDNADashboard() {
         </div>
 
         {/* Main Grid: Radar Chart + Dimensions */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 @lg:grid-cols-12 gap-8 items-start">
           {/* Radar Chart Column */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="@lg:col-span-5 space-y-6">
             <TasteRadarChart dimensions={radarData} />
 
             {/* Learning Sources Breakdown Box */}
@@ -172,9 +172,9 @@ export function TasteDNADashboard() {
           </div>
 
           {/* 8 Dimension Cards Column */}
-          <div className="lg:col-span-7 space-y-4">
+          <div className="@lg:col-span-7 space-y-4">
             <h3 className="text-base font-bold text-foreground">Eight Permanent Dimensions</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 @sm:grid-cols-2 gap-4">
               {dimensionsList.map((dim) => {
                 const percentage = Math.round(dim.val * 100);
                 const qualitative = getQualitativeLabel(dim.key, dim.val);

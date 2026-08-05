@@ -72,7 +72,7 @@ export function Layout() {
       {isPhoneFrameMode ? (
         /* Phone Chassis Frame Wrapper */
         <div className="w-full flex-1 flex items-center justify-center p-0 md:py-6">
-          <div className="w-full md:max-w-[415px] md:h-[840px] md:rounded-[52px] md:border-[12px] md:border-neutral-800/90 md:shadow-[0_35px_90px_rgba(0,0,0,0.95)] overflow-hidden relative flex flex-col bg-neutral-950 border-neutral-800">
+          <div className="@container w-full md:max-w-[415px] md:h-[840px] md:rounded-[52px] md:border-[12px] md:border-neutral-800/90 md:shadow-[0_35px_90px_rgba(0,0,0,0.95)] overflow-hidden relative flex flex-col bg-neutral-950 border-neutral-800">
             
             {/* Phone Top Status Bar & Dynamic Island (Desktop Mode) */}
             <div className="hidden md:flex items-center justify-between px-6 pt-3 pb-1 bg-neutral-950 text-white select-none z-30 shrink-0">

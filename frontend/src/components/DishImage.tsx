@@ -24,7 +24,7 @@ export function DishImage({ src, alt, className = "w-full h-full object-cover" }
 
     return (
       <div className={`w-full h-full bg-gradient-to-br ${color} flex items-center justify-center text-white p-4 text-center select-none font-bold shrink-0`}>
-        <span className="text-sm md:text-base font-extrabold tracking-wide uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
+        <span className="text-sm @md:text-base font-extrabold tracking-wide uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
           {alt}
         </span>
       </div>

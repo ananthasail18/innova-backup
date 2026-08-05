@@ -207,7 +207,7 @@ export const ZomatoOverlayPage: React.FC = () => {
 
       {/* Zomato Partner Restaurant Header Banner */}
       <section className="bg-gradient-to-b from-neutral-900 via-neutral-900/90 to-neutral-950 border-b border-neutral-800/80 px-4 pt-4 pb-5">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="max-w-4xl mx-auto flex flex-col @md:flex-row @md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">
@@ -308,7 +308,7 @@ export const ZomatoOverlayPage: React.FC = () => {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+        <div className="grid grid-cols-1 @md:grid-cols-2 gap-3.5">
           {filteredDishes.map((dish) => (
             <div 
               key={dish.id} 

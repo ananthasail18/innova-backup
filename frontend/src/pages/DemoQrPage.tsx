@@ -38,13 +38,13 @@ export function DemoQrPage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground p-6 md:p-12 relative overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-background text-foreground p-6 @md:p-12 relative overflow-hidden">
       {/* Dynamic background decoration */}
       <div className="absolute top-10 left-10 w-92 h-92 bg-primary/10 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-10 right-10 w-92 h-92 bg-accent/10 rounded-full blur-3xl" />
 
       <div className="w-full max-w-6xl mx-auto space-y-8 relative z-10">
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-border pb-6">
+        <header className="flex flex-col @md:flex-row justify-between items-start @md:items-center gap-4 border-b border-border pb-6">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <QrCode className="w-6 h-6 text-primary" />
@@ -62,11 +62,11 @@ export function DemoQrPage() {
           </button>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 @md:grid-cols-3 gap-6">
           {demoRestaurants.map((rest) => (
             <div
               key={rest.slug}
-              className="bg-card/40 border border-border backdrop-blur-md rounded-3xl p-6 md:p-8 flex flex-col items-center justify-between text-center space-y-6 shadow-xl transition-all hover:border-primary/45 group"
+              className="bg-card/40 border border-border backdrop-blur-md rounded-3xl p-6 @md:p-8 flex flex-col items-center justify-between text-center space-y-6 shadow-xl transition-all hover:border-primary/45 group"
             >
               <div className="space-y-3 w-full">
                 <span className={`inline-block px-3 py-1 text-xs font-bold rounded-full ${rest.color} ${rest.textColor}`}>

@@ -160,7 +160,7 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-lg bg-card/95 border border-border rounded-3xl p-6 md:p-8 shadow-2xl relative max-h-[85vh] overflow-y-auto flex flex-col space-y-6">
+      <div className="w-full max-w-lg bg-card/95 border border-border rounded-3xl p-6 @md:p-8 shadow-2xl relative max-h-[85vh] overflow-y-auto flex flex-col space-y-6">
         
         {/* Close Button */}
         {!isSubmitted && (
@@ -243,7 +243,7 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
                     {isChecked && (
                       <div className="mt-4 pt-4 border-t border-border/50 space-y-4 animate-fadeIn">
                         {/* 1. Spiciness */}
-                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
                           <span className="text-xs font-semibold text-muted-foreground">Spiciness:</span>
                           <div className="flex gap-2">
                             <button type="button" onClick={() => handleDeltaChange(dish.id, 'spice', -0.10)}
@@ -256,7 +256,7 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
                         </div>
 
                         {/* 2. Sweetness */}
-                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
                           <span className="text-xs font-semibold text-muted-foreground">Sweetness:</span>
                           <div className="flex gap-2">
                             <button type="button" onClick={() => handleDeltaChange(dish.id, 'sweetness', -0.10)}
@@ -269,7 +269,7 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
                         </div>
 
                         {/* 3. Creaminess */}
-                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
                           <span className="text-xs font-semibold text-muted-foreground">Creaminess:</span>
                           <div className="flex gap-2">
                             <button type="button" onClick={() => handleDeltaChange(dish.id, 'creaminess', -0.10)}
@@ -282,7 +282,7 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
                         </div>
 
                         {/* 4. Tanginess */}
-                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
                           <span className="text-xs font-semibold text-muted-foreground">Tanginess:</span>
                           <div className="flex gap-2">
                             <button type="button" onClick={() => handleDeltaChange(dish.id, 'tanginess', -0.10)}
@@ -295,7 +295,7 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
                         </div>
 
                         {/* 5. Masala Intensity */}
-                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
                           <span className="text-xs font-semibold text-muted-foreground">Masala:</span>
                           <div className="flex gap-2">
                             <button type="button" onClick={() => handleDeltaChange(dish.id, 'masala_intensity', -0.10)}
@@ -308,7 +308,7 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
                         </div>
 
                         {/* 6. Crunchiness */}
-                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
                           <span className="text-xs font-semibold text-muted-foreground">Crunchiness:</span>
                           <div className="flex gap-2">
                             <button type="button" onClick={() => handleDeltaChange(dish.id, 'crunchiness', -0.10)}
@@ -321,7 +321,7 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
                         </div>
 
                         {/* 7. Oiliness */}
-                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
                           <span className="text-xs font-semibold text-muted-foreground">Oiliness:</span>
                           <div className="flex gap-2">
                             <button type="button" onClick={() => handleDeltaChange(dish.id, 'oiliness', -0.10)}
@@ -334,7 +334,7 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
                         </div>
 
                         {/* 8. Saltiness */}
-                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
                           <span className="text-xs font-semibold text-muted-foreground">Saltiness:</span>
                           <div className="flex gap-2">
                             <button type="button" onClick={() => handleDeltaChange(dish.id, 'saltiness', -0.10)}

@@ -7,10 +7,14 @@ This document outlines the features and components that have been developed for 
 ### Frontend (Mobile React/Vite/Tailwind)
 *   **Taste DNA Onboarding (Quiz):** 
     *   Automatically provisions a guest session if none exists.
-    *   Walks the user through a guided quiz and POSTs the result to initialize a user's `TasteProfile`.
+    *   Walks the user through a guided 8-question quiz matched exactly to the Taste DNA dimensions.
+    *   Features smooth auto-advancing UX on selection and explicit "Establish Taste DNA" validation step.
 *   **Zomato Overlay / Native Experience:**
     *   Custom `ZomatoOverlayPage.tsx` designed to match Zomato's UI aesthetic (Red color scheme, compact glassmorphism).
     *   Includes a quick Multi-Restaurant Switcher pill bar to easily swap between context menus (e.g., Spice Symphony, Rameshwaram Cafe).
+*   **Phone Chassis & Container Queries:**
+    *   The `Layout.tsx` traps the UI in a max 415px phone simulator frame on desktop.
+    *   Uses Tailwind v4 `@container` queries exclusively inside components (e.g. `@md:grid-cols-2`) instead of standard media queries to ensure grids scale correctly relative to the chassis, not the physical monitor.
 *   **Taste DNA Dashboard (`TasteDNADashboard.tsx`):**
     *   Visualizes the user's 8-dimensional Taste DNA via a Radar Chart.
     *   Displays a real-time **Taste DNA Evolution Timeline**, reflecting changes to the profile over time.

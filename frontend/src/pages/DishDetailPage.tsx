@@ -39,7 +39,7 @@ export function DishDetailPage() {
       </div>
 
       <main className="flex-1 max-w-3xl mx-auto w-full">
-        <div className="w-full aspect-[4/3] sm:aspect-[16/9] bg-muted">
+        <div className="w-full aspect-[4/3] @sm:aspect-[16/9] bg-muted">
           <DishImage 
             src={dish.image_url} 
             alt={dish.name} 
@@ -50,7 +50,7 @@ export function DishDetailPage() {
         <div className="p-6 space-y-6">
           <div className="space-y-4">
             <div className="flex justify-between items-start gap-4">
-              <h1 className="text-2xl sm:text-3xl font-bold">{dish.name}</h1>
+              <h1 className="text-2xl @sm:text-3xl font-bold">{dish.name}</h1>
               <VegIndicator isVegetarian={dish.is_vegetarian} />
             </div>
 

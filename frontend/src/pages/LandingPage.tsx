@@ -72,12 +72,12 @@ export function LandingPage() {
         />
         <div className="absolute inset-0 bg-black/60" />
         
-        <div className="relative z-10 w-full max-w-2xl mx-auto p-6 md:p-10 text-center text-white space-y-8">
+        <div className="relative z-10 w-full max-w-2xl mx-auto p-6 @md:p-10 text-center text-white space-y-8">
           <div className="space-y-4">
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
+            <h1 className="text-5xl @md:text-7xl font-extrabold tracking-tight">
               {restaurant.name}
             </h1>
-            <p className="text-xl md:text-2xl text-white/90">
+            <p className="text-xl @md:text-2xl text-white/90">
               Discover your perfect dish.
             </p>
           </div>

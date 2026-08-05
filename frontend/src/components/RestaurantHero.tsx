@@ -10,16 +10,16 @@ export function RestaurantHero({ restaurant }: { restaurant: Restaurant }) {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
       
-      <div className="relative z-10 w-full max-w-5xl mx-auto p-6 md:p-10 text-white flex flex-col md:flex-row items-center md:items-end gap-6">
+      <div className="relative z-10 w-full max-w-5xl mx-auto p-6 @md:p-10 text-white flex flex-col @md:flex-row items-center @md:items-end gap-6">
         {restaurant.logo && (
           <img 
             src={restaurant.logo} 
             alt={`${restaurant.name} logo`} 
-            className="w-24 h-24 md:w-32 md:h-32 rounded-3xl object-cover border-4 border-background bg-card shadow-2xl transition-transform hover:scale-105 duration-500"
+            className="w-24 h-24 @md:w-32 @md:h-32 rounded-3xl object-cover border-4 border-background bg-card shadow-2xl transition-transform hover:scale-105 duration-500"
           />
         )}
-        <div className="flex-1 space-y-3 text-center md:text-left">
-          <div className="flex flex-wrap items-center gap-2 justify-center md:justify-start">
+        <div className="flex-1 space-y-3 text-center @md:text-left">
+          <div className="flex flex-wrap items-center gap-2 justify-center @md:justify-start">
             {restaurant.cuisine && (
               <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-extrabold rounded-full uppercase tracking-wider">
                 {restaurant.cuisine}
@@ -40,18 +40,18 @@ export function RestaurantHero({ restaurant }: { restaurant: Restaurant }) {
             </span>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight drop-shadow-md">
+          <h1 className="text-4xl @md:text-6xl font-black tracking-tight drop-shadow-md">
             {restaurant.name}
           </h1>
 
           {restaurant.description && (
-            <p className="text-base md:text-lg text-white/90 max-w-2xl leading-relaxed drop-shadow">
+            <p className="text-base @md:text-lg text-white/90 max-w-2xl leading-relaxed drop-shadow">
               {restaurant.description}
             </p>
           )}
 
           {restaurant.opening_hours && (
-            <div className="flex items-center justify-center md:justify-start gap-1.5 text-sm text-white/85 pt-1">
+            <div className="flex items-center justify-center @md:justify-start gap-1.5 text-sm text-white/85 pt-1">
               <Clock className="w-4 h-4 text-primary animate-pulse" />
               <span>Hours: <span className="font-semibold">{restaurant.opening_hours}</span></span>
             </div>
