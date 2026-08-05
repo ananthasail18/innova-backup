@@ -102,18 +102,29 @@ class RecommendationService:
             
             final_score = (taste_match * 0.60) + (community_score * 0.15) + (popularity * 0.25)
             
-            # Generate reasons
+            # Generate reasons based on closest matching traits
+            dimensions_names = [
+                "Spice", "Sweetness", "Creaminess", "Tanginess", 
+                "Masala", "Crunch", "Oiliness", "Saltiness"
+            ]
+            
+            trait_diffs = []
+            for i, dim_name in enumerate(dimensions_names):
+                diff = abs(user_vector[i] - dish_vector[i])
+                trait_diffs.append((diff, dim_name))
+                
+            trait_diffs.sort(key=lambda x: x[0])
+            matching_traits = [dim for diff, dim in trait_diffs if diff < 0.25][:3]
+            
             reasons = []
-            if taste_match > 0.90:
-                reasons.append(RecommendationReason(type="taste_match", text="Perfect match for your taste profile"))
-            elif taste_match > 0.80:
-                reasons.append(RecommendationReason(type="taste_match", text="Great match for your preferences"))
+            for trait in matching_traits:
+                reasons.append(RecommendationReason(type="taste_match", text=f"Matches your {trait} preference"))
                 
             if community_score > 0.70:
-                reasons.append(RecommendationReason(type="community", text="People with similar taste loved this"))
+                reasons.append(RecommendationReason(type="community", text="Highly rated by people with similar Taste DNA"))
                 
             if popularity > 0.80:
-                reasons.append(RecommendationReason(type="popularity", text="Highly popular dish"))
+                reasons.append(RecommendationReason(type="popularity", text="Trending dish right now"))
                 
             if getattr(dish, 'chef_notes', None):
                 reasons.append(RecommendationReason(type="chef", text="Chef's special highlight"))

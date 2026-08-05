@@ -118,11 +118,13 @@ export function Layout() {
                     <QrCode className="w-3.5 h-3.5" />
                   </button>
                   <button 
-                    onClick={() => navigate('/profile')}
-                    className="flex items-center gap-1 bg-gradient-to-r from-orange-600 to-amber-600 px-2 py-0.5 rounded-full text-[10px] font-extrabold text-white shadow-sm"
+                    onClick={() => {
+                      setUserId(null);
+                      navigate('/');
+                    }}
+                    className="flex items-center gap-1 bg-neutral-800 border border-neutral-700 px-3 py-1 rounded-full text-[10px] font-bold text-neutral-300 hover:text-white hover:bg-neutral-700 transition-colors shadow-sm"
                   >
-                    <Sparkles className="w-3 h-3 text-yellow-300" />
-                    <span>8D DNA</span>
+                    <span>Logout</span>
                   </button>
                 </div>
               </div>

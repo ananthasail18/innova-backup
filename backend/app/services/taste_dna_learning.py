@@ -143,7 +143,7 @@ class TasteDNALearningService:
                     matrix_dim.value = db_val
         
         weight = LEARNING_WEIGHTS.get(event_type, 0.20)
-        alpha = round(weight * 0.25, 3)  # Smoothing factor (e.g. 0.06 - 0.10)
+        alpha = round(weight * 1.25, 3)  # Smoothing factor increased for ~5% step sizes
         today = datetime.utcnow().strftime("%Y-%m-%d")
 
         source_label = event_type.replace("_", " ").title()

@@ -6,6 +6,7 @@ import type { ChatMessage } from '@/services/types';
 import { Send, Bot, User, X, Loader2 } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useRestaurantContext } from '@/hooks/RestaurantContext';
+import ReactMarkdown from 'react-markdown';
 
 export function ChatWindow({ onClose }: { onClose: () => void }) {
   const { userId } = useSession();
@@ -106,9 +107,13 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
             <div className={`p-3 rounded-2xl text-xs @sm:text-sm max-w-[80%] leading-relaxed ${
               msg.role === 'user' 
                 ? 'bg-primary text-primary-foreground rounded-tr-none font-medium' 
-                : 'bg-muted/70 text-foreground rounded-tl-none border border-border/40'
+                : 'bg-muted/70 text-foreground rounded-tl-none border border-border/40 prose prose-sm prose-invert prose-p:leading-snug prose-strong:text-orange-400'
             }`}>
-              {msg.content}
+              {msg.role === 'user' ? (
+                msg.content
+              ) : (
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              )}
             </div>
           </div>
         ))}

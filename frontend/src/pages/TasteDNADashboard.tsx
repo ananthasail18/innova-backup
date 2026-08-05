@@ -107,34 +107,34 @@ export function TasteDNADashboard() {
         </div>
 
         {/* Top KPI Cards */}
-        <div className="grid grid-cols-1 @sm:grid-cols-3 gap-4">
-          <div className="bg-card border border-border p-5 rounded-2xl flex flex-col justify-between">
-            <span className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Overall Completion</span>
-            <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-black text-foreground">100%</span>
-              <span className="text-xs font-medium text-emerald-500">Fully Mapped</span>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-card border border-border p-4 rounded-2xl flex flex-col justify-between">
+            <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider leading-tight">Overall Completion</span>
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 mt-2">
+              <span className="text-2xl @sm:text-3xl font-black text-foreground">100%</span>
+              <span className="text-[10px] font-medium text-emerald-500 whitespace-nowrap">Fully Mapped</span>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-2">All 8 permanent flavor dimensions initialized</p>
+            <p className="text-[10px] text-muted-foreground mt-2 leading-tight">All 8 permanent flavor dimensions initialized</p>
           </div>
 
-          <div className="bg-card border border-border p-5 rounded-2xl flex flex-col justify-between">
-            <span className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Learning Confidence</span>
-            <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-black text-primary">{overallConfidencePct}%</span>
-              <span className="text-xs font-bold px-2 py-0.5 bg-primary/10 text-primary rounded-full">
+          <div className="bg-card border border-border p-4 rounded-2xl flex flex-col justify-between">
+            <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider leading-tight">Learning Confidence</span>
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 mt-2">
+              <span className="text-2xl @sm:text-3xl font-black text-primary">{overallConfidencePct}%</span>
+              <span className="text-[9px] font-bold px-1.5 py-0.5 bg-primary/10 text-primary rounded-full whitespace-nowrap">
                 {overallConfidencePct > 75 ? 'High Precision' : overallConfidencePct > 55 ? 'Learning' : 'Initial'}
               </span>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-2">Increases monotonically with meal feedback</p>
+            <p className="text-[10px] text-muted-foreground mt-2 leading-tight">Increases monotonically with meal feedback</p>
           </div>
 
-          <div className="bg-card border border-border p-5 rounded-2xl flex flex-col justify-between">
-            <span className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Primary Intelligence Pillar</span>
+          <div className="bg-card border border-border p-4 rounded-2xl flex flex-col justify-between col-span-2 @sm:col-span-2 @md:col-span-1">
+            <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider leading-tight">Primary Intelligence Pillar</span>
             <div className="flex items-center gap-2 mt-2">
-              <Sparkles className="w-5 h-5 text-amber-500" />
-              <span className="text-lg font-bold text-foreground">Taste DNA Engine</span>
+              <Sparkles className="w-5 h-5 text-amber-500 shrink-0" />
+              <span className="text-base font-bold text-foreground truncate">Taste DNA Engine</span>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-2">Continuous gradual learning (lerp smoothing)</p>
+            <p className="text-[10px] text-muted-foreground mt-2 leading-tight">Continuous gradual learning (lerp smoothing)</p>
           </div>
         </div>
 
@@ -226,18 +226,20 @@ export function TasteDNADashboard() {
 
           <div className="space-y-3 pt-2">
             {evolutionEvents.map((evt: any, idx: number) => (
-              <div key={idx} className="flex items-start gap-4 p-3 bg-muted/30 rounded-xl border border-border/40">
-                <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <div className="flex-1">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-foreground">{evt.event}</span>
-                    <span className="text-[10px] text-muted-foreground">{evt.date}</span>
+              <div key={idx} className="flex items-start gap-3 p-3 bg-muted/30 rounded-xl border border-border/40">
+                <div className="w-2 h-2 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col @sm:flex-row @sm:justify-between @sm:items-center gap-1.5">
+                    <span className="text-xs font-bold text-foreground leading-snug break-words">{evt.event}</span>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-[10px] text-muted-foreground">{evt.date}</span>
+                      <span className="text-[9px] font-semibold px-1.5 py-0.5 bg-background border border-border rounded-md text-muted-foreground whitespace-nowrap">
+                        {evt.source}
+                      </span>
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">{evt.description}</p>
+                  <p className="text-[11px] text-muted-foreground mt-1.5 leading-relaxed break-words">{evt.description}</p>
                 </div>
-                <span className="text-[10px] font-semibold px-2 py-0.5 bg-background border border-border rounded-lg text-muted-foreground whitespace-nowrap">
-                  {evt.source}
-                </span>
               </div>
             ))}
           </div>

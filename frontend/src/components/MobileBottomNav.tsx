@@ -12,9 +12,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ isPhoneFrame =
 
   const navItems = [
     { to: '/restaurant', icon: Utensils, label: 'Menu' },
-    { to: '/quiz', icon: Sparkles, label: 'Taste DNA' },
+    { to: '/profile', icon: Sparkles, label: 'Taste DNA' },
     { to: '/scanner', icon: QrCode, label: 'Scan QR' },
-    { to: '/zomato', icon: Store, label: 'Zomato AI', badgeText: 'NEW' },
     { to: '/cart', icon: ShoppingBag, label: 'Cart', badgeCount: totalItems },
   ];
 
