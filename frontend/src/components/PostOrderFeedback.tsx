@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Dish } from '@/services/types';
 import { useSubmitFeedback } from '@/services/queries';
 import { useSession } from '@/hooks/SessionContext';
-import { X, Check, Star, AlertCircle, Sparkles } from 'lucide-react';
+import { X, Check, Star, AlertCircle, Sparkles, History } from 'lucide-react';
 
 interface PostOrderFeedbackProps {
   isOpen: boolean;
@@ -12,6 +12,11 @@ interface PostOrderFeedbackProps {
 
 interface DishFeedback {
   spice?: number;
+  sweetness?: number;
+  creaminess?: number;
+  tanginess?: number;
+  masala_intensity?: number;
+  crunchiness?: number;
   oiliness?: number;
   saltiness?: number;
 }
@@ -22,6 +27,7 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
   const [selectedDishes, setSelectedDishes] = useState<Record<string, boolean>>({});
   const [feedbackDeltas, setFeedbackDeltas] = useState<Record<string, DishFeedback>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [updatedProfile, setUpdatedProfile] = useState<any>(null);
 
   if (!isOpen) return null;
 
@@ -57,6 +63,11 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
     // Aggregate deltas across all checked dishes
     const mergedDeltas: Record<string, number> = {
       spice: 0,
+      sweetness: 0,
+      creaminess: 0,
+      tanginess: 0,
+      masala_intensity: 0,
+      crunchiness: 0,
       oiliness: 0,
       saltiness: 0,
     };
@@ -72,13 +83,33 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
           mergedDeltas.spice += feedback.spice;
           dishDesc.push(feedback.spice > 0 ? "Need More Spice" : "Too Spicy");
         }
+        if (feedback.sweetness) {
+          mergedDeltas.sweetness += feedback.sweetness;
+          dishDesc.push(feedback.sweetness > 0 ? "Need More Sweetness" : "Too Sweet");
+        }
+        if (feedback.creaminess) {
+          mergedDeltas.creaminess += feedback.creaminess;
+          dishDesc.push(feedback.creaminess > 0 ? "Need More Creaminess" : "Too Rich");
+        }
+        if (feedback.tanginess) {
+          mergedDeltas.tanginess += feedback.tanginess;
+          dishDesc.push(feedback.tanginess > 0 ? "Need More Tang" : "Too Sour/Tangy");
+        }
+        if (feedback.masala_intensity) {
+          mergedDeltas.masala_intensity += feedback.masala_intensity;
+          dishDesc.push(feedback.masala_intensity > 0 ? "Need More Masala" : "Overpowering Masala");
+        }
+        if (feedback.crunchiness) {
+          mergedDeltas.crunchiness += feedback.crunchiness;
+          dishDesc.push(feedback.crunchiness > 0 ? "Need More Crunch" : "Too Hard");
+        }
         if (feedback.oiliness) {
           mergedDeltas.oiliness += feedback.oiliness;
-          dishDesc.push(feedback.oiliness > 0 ? "Need More Oil" : "Too Oily");
+          dishDesc.push(feedback.oiliness > 0 ? "Too Dry" : "Too Oily");
         }
         if (feedback.saltiness) {
           mergedDeltas.saltiness += feedback.saltiness;
-          dishDesc.push(feedback.saltiness > 0 ? "Need More Salt" : "Too Salty");
+          dishDesc.push(feedback.saltiness > 0 ? "Need Salt" : "Too Salty");
         }
 
         if (dishDesc.length > 0) {
@@ -105,12 +136,27 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
           : "Ordered meals matched expectation perfectly."
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          setUpdatedProfile(data);
           setIsSubmitted(true);
         },
       }
     );
   };
+
+  const getRecentEvolution = () => {
+    if (!updatedProfile || !updatedProfile.dna_matrix) return null;
+    const matrix = typeof updatedProfile.dna_matrix === 'string' 
+      ? JSON.parse(updatedProfile.dna_matrix) 
+      : updatedProfile.dna_matrix;
+      
+    if (matrix.recent_evolution && matrix.recent_evolution.length > 0) {
+      return matrix.recent_evolution[0]; // Get the latest change
+    }
+    return null;
+  };
+
+  const recentEvent = getRecentEvolution();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -127,19 +173,39 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
         )}
 
         {isSubmitted ? (
-          <div className="text-center py-8 space-y-4 flex flex-col items-center">
-            <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center animate-bounce">
+          <div className="text-center py-6 space-y-6 flex flex-col items-center animate-in fade-in zoom-in duration-500">
+            <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center animate-bounce shadow-lg shadow-primary/20">
               <Sparkles className="w-8 h-8" />
             </div>
-            <h2 className="text-2xl font-black tracking-tight">Feedback Received!</h2>
-            <p className="text-sm text-muted-foreground max-w-sm">
-              Thank you! We've adjusted your Taste DNA. Your recommendations and radar dashboard have been updated in real-time.
-            </p>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-black tracking-tight">Taste DNA Updated!</h2>
+              <p className="text-sm text-muted-foreground max-w-sm">
+                Thank you for the feedback. Your continuous learning profile has dynamically adapted.
+              </p>
+            </div>
+            
+            {/* Taste DNA Update History Preview */}
+            {recentEvent && (
+              <div className="w-full bg-muted/40 border border-primary/30 rounded-2xl p-5 mt-4 text-left space-y-3 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full" />
+                <div className="flex items-center gap-2 text-primary font-bold">
+                  <History className="w-4 h-4" />
+                  <span className="text-sm uppercase tracking-wider">Evolution Log</span>
+                </div>
+                <div className="space-y-1 relative z-10">
+                  <p className="text-xs font-semibold text-foreground">{recentEvent.event}</p>
+                  <p className="text-sm font-medium text-muted-foreground leading-relaxed">
+                    {recentEvent.description}
+                  </p>
+                </div>
+              </div>
+            )}
+            
             <button
               onClick={onClose}
-              className="mt-6 px-6 py-2.5 bg-primary text-primary-foreground text-sm font-bold rounded-xl hover:bg-primary/95 transition-all shadow-md"
+              className="mt-6 w-full py-3.5 bg-primary text-primary-foreground text-sm font-bold rounded-xl hover:bg-primary/95 transition-all shadow-md active:scale-95"
             >
-              Continue Browsing
+              Close & Browse
             </button>
           </div>
         ) : (
@@ -150,11 +216,11 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
               </div>
               <h2 className="text-2xl font-black tracking-tight">How was your meal?</h2>
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                Help us refine your Taste DNA. Select any dishes that deviated from your expectations to adjust your future recommendations.
+                Help us refine your Taste DNA. Select any dishes that deviated from your expectations across any of our 8 dimensions.
               </p>
             </div>
 
-            <div className="space-y-4 max-h-[40vh] overflow-y-auto pr-1">
+            <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 no-scrollbar">
               {orderedDishes.map((dish) => {
                 const isChecked = !!selectedDishes[dish.id];
                 const feedback = feedbackDeltas[dish.id] || {};
@@ -176,66 +242,107 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
 
                     {isChecked && (
                       <div className="mt-4 pt-4 border-t border-border/50 space-y-4 animate-fadeIn">
-                        {/* Spice controls */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        {/* 1. Spiciness */}
+                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
                           <span className="text-xs font-semibold text-muted-foreground">Spiciness:</span>
                           <div className="flex gap-2">
-                            <button
-                              type="button"
-                              onClick={() => handleDeltaChange(dish.id, 'spice', -0.10)}
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'spice', -0.10)}
                               className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.spice === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >
-                              🌶️ Too Spicy
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleDeltaChange(dish.id, 'spice', 0.10)}
+                            >🌶️ Too Spicy</button>
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'spice', 0.10)}
                               className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.spice === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >
-                              Need More Spice
-                            </button>
+                            >Need More Spice</button>
                           </div>
                         </div>
 
-                        {/* Oiliness controls */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        {/* 2. Sweetness */}
+                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+                          <span className="text-xs font-semibold text-muted-foreground">Sweetness:</span>
+                          <div className="flex gap-2">
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'sweetness', -0.10)}
+                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.sweetness === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
+                            >🍬 Too Sweet</button>
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'sweetness', 0.10)}
+                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.sweetness === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
+                            >Need Sweetness</button>
+                          </div>
+                        </div>
+
+                        {/* 3. Creaminess */}
+                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+                          <span className="text-xs font-semibold text-muted-foreground">Creaminess:</span>
+                          <div className="flex gap-2">
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'creaminess', -0.10)}
+                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.creaminess === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
+                            >🥛 Too Rich</button>
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'creaminess', 0.10)}
+                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.creaminess === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
+                            >Need More Cream</button>
+                          </div>
+                        </div>
+
+                        {/* 4. Tanginess */}
+                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+                          <span className="text-xs font-semibold text-muted-foreground">Tanginess:</span>
+                          <div className="flex gap-2">
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'tanginess', -0.10)}
+                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.tanginess === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
+                            >🍋 Too Sour/Tangy</button>
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'tanginess', 0.10)}
+                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.tanginess === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
+                            >Need More Tang</button>
+                          </div>
+                        </div>
+
+                        {/* 5. Masala Intensity */}
+                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+                          <span className="text-xs font-semibold text-muted-foreground">Masala:</span>
+                          <div className="flex gap-2">
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'masala_intensity', -0.10)}
+                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.masala_intensity === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
+                            >🌿 Too Much Masala</button>
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'masala_intensity', 0.10)}
+                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.masala_intensity === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
+                            >Need More Masala</button>
+                          </div>
+                        </div>
+
+                        {/* 6. Crunchiness */}
+                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+                          <span className="text-xs font-semibold text-muted-foreground">Crunchiness:</span>
+                          <div className="flex gap-2">
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'crunchiness', -0.10)}
+                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.crunchiness === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
+                            >💥 Too Hard</button>
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'crunchiness', 0.10)}
+                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.crunchiness === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
+                            >Need More Crunch</button>
+                          </div>
+                        </div>
+
+                        {/* 7. Oiliness */}
+                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
                           <span className="text-xs font-semibold text-muted-foreground">Oiliness:</span>
                           <div className="flex gap-2">
-                            <button
-                              type="button"
-                              onClick={() => handleDeltaChange(dish.id, 'oiliness', -0.10)}
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'oiliness', -0.10)}
                               className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.oiliness === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >
-                              💧 Too Oily
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleDeltaChange(dish.id, 'oiliness', 0.10)}
+                            >💧 Too Oily</button>
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'oiliness', 0.10)}
                               className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.oiliness === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >
-                              Too Dry
-                            </button>
+                            >Too Dry</button>
                           </div>
                         </div>
 
-                        {/* Saltiness controls */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        {/* 8. Saltiness */}
+                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
                           <span className="text-xs font-semibold text-muted-foreground">Saltiness:</span>
                           <div className="flex gap-2">
-                            <button
-                              type="button"
-                              onClick={() => handleDeltaChange(dish.id, 'saltiness', -0.10)}
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'saltiness', -0.10)}
                               className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.saltiness === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >
-                              🧂 Too Salty
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleDeltaChange(dish.id, 'saltiness', 0.10)}
+                            >🧂 Too Salty</button>
+                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'saltiness', 0.10)}
                               className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.saltiness === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >
-                              Bland / Need Salt
-                            </button>
+                            >Bland / Need Salt</button>
                           </div>
                         </div>
 
