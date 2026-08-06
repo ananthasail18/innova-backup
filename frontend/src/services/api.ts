@@ -19,12 +19,15 @@ const resolveApiBaseUrl = (): string => {
 
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:8001/api/v1';
+    }
     if (hostname === '10.0.2.2') {
       return 'http://10.0.2.2:8001/api/v1';
     }
-    if (hostname) {
-      return `http://${hostname}:8001/api/v1`;
-    }
+    // In production (Vercel), we rely on relative paths since the frontend and backend 
+    // are served on the same domain via vercel.json rewrites.
+    return '/api/v1';
   }
 
   return 'http://localhost:8001/api/v1';
