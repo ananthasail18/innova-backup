@@ -17,6 +17,18 @@ export const useRecommendations = (userId: string | null) => {
   });
 };
 
+export const useCommunityRecommendations = (restaurantId: string | undefined, userId: string | null) => {
+  return useQuery({
+    queryKey: ['community-recommendations', restaurantId, userId],
+    queryFn: async () => {
+      if (!restaurantId || !userId) return null;
+      const { data } = await api.get<ApiResponse<any>>(`/restaurants/${restaurantId}/community-recommendations?user_id=${userId}`);
+      return data.data;
+    },
+    enabled: !!restaurantId && !!userId,
+  });
+};
+
 export const useDishRecommendation = (userId: string | null, dishId: string | undefined) => {
   return useQuery({
     queryKey: ['recommendation', userId, dishId],
@@ -182,4 +194,16 @@ export const useSubmitFeedback = () => {
     },
   });
 };
-
+export const useLikeDish = () => {
+  return useMutation({
+    mutationFn: async (payload: {
+      user_id: string;
+      dish_id: string;
+      liked: boolean;
+      would_reorder?: boolean;
+    }) => {
+      const { data } = await api.post<ApiResponse<any>>('/community/like', payload);
+      return data.data;
+    },
+  });
+};

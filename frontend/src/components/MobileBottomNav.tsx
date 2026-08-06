@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Utensils, Sparkles, QrCode, ShoppingBag, Store } from 'lucide-react';
+import { Utensils, Sparkles, Users, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 
 interface MobileBottomNavProps {
@@ -12,8 +12,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ isPhoneFrame =
 
   const navItems = [
     { to: '/restaurant', icon: Utensils, label: 'Menu' },
+    { to: '/explore', icon: Users, label: 'Explore' },
     { to: '/profile', icon: Sparkles, label: 'Taste DNA' },
-    { to: '/scanner', icon: QrCode, label: 'Scan QR' },
     { to: '/cart', icon: ShoppingBag, label: 'Cart', badgeCount: totalItems },
   ];
 

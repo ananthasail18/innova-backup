@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { Dish } from '@/services/types';
-import { useSubmitFeedback } from '@/services/queries';
+import { useSubmitFeedback, useLikeDish } from '@/services/queries';
 import { useSession } from '@/hooks/SessionContext';
-import { X, Check, Star, AlertCircle, Sparkles, History } from 'lucide-react';
+import { X, Star, AlertCircle, Sparkles, History, ThumbsUp, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface PostOrderFeedbackProps {
   isOpen: boolean;
@@ -21,38 +21,44 @@ interface DishFeedback {
   saltiness?: number;
 }
 
+const DIMENSIONS: { key: keyof DishFeedback; label: string; less: string; more: string; lessEmoji: string; moreEmoji: string }[] = [
+  { key: 'spice',           label: 'Spiciness',   less: 'Too Spicy',       more: 'Need More Spice',   lessEmoji: '🌶️', moreEmoji: '🔥' },
+  { key: 'sweetness',       label: 'Sweetness',   less: 'Too Sweet',       more: 'Need Sweetness',    lessEmoji: '🍬', moreEmoji: '🍯' },
+  { key: 'creaminess',      label: 'Creaminess',  less: 'Too Rich',        more: 'Need More Cream',   lessEmoji: '🥛', moreEmoji: '🧈' },
+  { key: 'tanginess',       label: 'Tanginess',   less: 'Too Tangy',       more: 'Need More Tang',    lessEmoji: '🍋', moreEmoji: '🫙' },
+  { key: 'masala_intensity',label: 'Masala',      less: 'Too Much Masala', more: 'Need More Masala',  lessEmoji: '🌿', moreEmoji: '🫚' },
+  { key: 'crunchiness',     label: 'Crunchiness', less: 'Too Hard',        more: 'Need More Crunch',  lessEmoji: '💥', moreEmoji: '🥨' },
+  { key: 'oiliness',        label: 'Oiliness',    less: 'Too Oily',        more: 'Too Dry',           lessEmoji: '💧', moreEmoji: '🏜️' },
+  { key: 'saltiness',       label: 'Saltiness',   less: 'Too Salty',       more: 'Bland / Need Salt', lessEmoji: '🧂', moreEmoji: '🫙' },
+];
+
 export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderFeedbackProps) {
   const { userId } = useSession();
   const submitFeedback = useSubmitFeedback();
-  const [selectedDishes, setSelectedDishes] = useState<Record<string, boolean>>({});
+  const likeDish = useLikeDish();
+
+  // liked: true = thumbs up, null = no choice
+  const [likedDishes, setLikedDishes] = useState<Record<string, boolean | null>>({});
+  // which dishes have "Suggest Improvement" expanded
+  const [expandedDishes, setExpandedDishes] = useState<Record<string, boolean>>({});
   const [feedbackDeltas, setFeedbackDeltas] = useState<Record<string, DishFeedback>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [updatedProfile, setUpdatedProfile] = useState<any>(null);
 
   if (!isOpen) return null;
 
-  const toggleDishSelection = (dishId: string) => {
-    setSelectedDishes((prev) => ({
-      ...prev,
-      [dishId]: !prev[dishId],
-    }));
+  const toggleExpanded = (dishId: string) => {
+    setExpandedDishes(prev => ({ ...prev, [dishId]: !prev[dishId] }));
+  };
+
+  const toggleLike = (dishId: string) => {
+    setLikedDishes(prev => ({ ...prev, [dishId]: prev[dishId] === true ? null : true }));
   };
 
   const handleDeltaChange = (dishId: string, dimension: keyof DishFeedback, delta: number) => {
-    setFeedbackDeltas((prev) => {
-      const dishFeedback = prev[dishId] || {};
-      const currentVal = dishFeedback[dimension];
-      
-      // If user clicks the active option, toggle it off (reset to 0.0/undefined)
-      const newVal = currentVal === delta ? undefined : delta;
-      
-      return {
-        ...prev,
-        [dishId]: {
-          ...dishFeedback,
-          [dimension]: newVal,
-        },
-      };
+    setFeedbackDeltas(prev => {
+      const curr = prev[dishId] || {};
+      return { ...prev, [dishId]: { ...curr, [dimension]: curr[dimension] === delta ? undefined : delta } };
     });
   };
 
@@ -60,80 +66,50 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
     e.preventDefault();
     if (!userId) return;
 
-    // Aggregate deltas across all checked dishes
-    const mergedDeltas: Record<string, number> = {
-      spice: 0,
-      sweetness: 0,
-      creaminess: 0,
-      tanginess: 0,
-      masala_intensity: 0,
-      crunchiness: 0,
-      oiliness: 0,
-      saltiness: 0,
-    };
-
-    const descriptions: string[] = [];
-
+    // Submit likes as community signals
     orderedDishes.forEach((dish) => {
-      if (selectedDishes[dish.id]) {
-        const feedback = feedbackDeltas[dish.id] || {};
-        const dishDesc: string[] = [];
-
-        if (feedback.spice) {
-          mergedDeltas.spice += feedback.spice;
-          dishDesc.push(feedback.spice > 0 ? "Need More Spice" : "Too Spicy");
-        }
-        if (feedback.sweetness) {
-          mergedDeltas.sweetness += feedback.sweetness;
-          dishDesc.push(feedback.sweetness > 0 ? "Need More Sweetness" : "Too Sweet");
-        }
-        if (feedback.creaminess) {
-          mergedDeltas.creaminess += feedback.creaminess;
-          dishDesc.push(feedback.creaminess > 0 ? "Need More Creaminess" : "Too Rich");
-        }
-        if (feedback.tanginess) {
-          mergedDeltas.tanginess += feedback.tanginess;
-          dishDesc.push(feedback.tanginess > 0 ? "Need More Tang" : "Too Sour/Tangy");
-        }
-        if (feedback.masala_intensity) {
-          mergedDeltas.masala_intensity += feedback.masala_intensity;
-          dishDesc.push(feedback.masala_intensity > 0 ? "Need More Masala" : "Overpowering Masala");
-        }
-        if (feedback.crunchiness) {
-          mergedDeltas.crunchiness += feedback.crunchiness;
-          dishDesc.push(feedback.crunchiness > 0 ? "Need More Crunch" : "Too Hard");
-        }
-        if (feedback.oiliness) {
-          mergedDeltas.oiliness += feedback.oiliness;
-          dishDesc.push(feedback.oiliness > 0 ? "Too Dry" : "Too Oily");
-        }
-        if (feedback.saltiness) {
-          mergedDeltas.saltiness += feedback.saltiness;
-          dishDesc.push(feedback.saltiness > 0 ? "Need Salt" : "Too Salty");
-        }
-
-        if (dishDesc.length > 0) {
-          descriptions.push(`${dish.name} (${dishDesc.join(', ')})`);
-        }
+      if (likedDishes[dish.id] !== null && likedDishes[dish.id] !== undefined) {
+        likeDish.mutate({
+          user_id: userId,
+          dish_id: dish.id,
+          liked: likedDishes[dish.id] as boolean,
+          would_reorder: likedDishes[dish.id] as boolean,
+        });
       }
     });
 
-    // Remove zero delta keys so we only post changes
+    // Aggregate dimension deltas from expanded dishes
+    const mergedDeltas: Record<string, number> = {};
+    const descriptions: string[] = [];
+
+    orderedDishes.forEach((dish) => {
+      if (!expandedDishes[dish.id]) return;
+      const fb = feedbackDeltas[dish.id] || {};
+      const dishDesc: string[] = [];
+      DIMENSIONS.forEach(({ key, less, more }) => {
+        const val = fb[key];
+        if (val !== undefined) {
+          mergedDeltas[key] = (mergedDeltas[key] || 0) + val;
+          dishDesc.push(val < 0 ? less : more);
+        }
+      });
+      if (dishDesc.length > 0) descriptions.push(`${dish.name} (${dishDesc.join(', ')})`);
+    });
+
+    // Clamp aggregated changes
     const finalDeltas: Record<string, number> = {};
-    Object.entries(mergedDeltas).forEach(([key, val]) => {
-      if (val !== 0) {
-        finalDeltas[key] = Math.max(-0.25, Math.min(0.25, val)); // Clamp aggregated changes
-      }
+    Object.entries(mergedDeltas).forEach(([k, v]) => {
+      if (v !== 0) finalDeltas[k] = Math.max(-0.25, Math.min(0.25, v));
     });
 
     submitFeedback.mutate(
       {
         user_id: userId,
-        event_type: "RECOMMENDATION_FEEDBACK",
+        event_type: 'RECOMMENDATION_FEEDBACK',
         dimension_deltas: finalDeltas,
-        event_description: descriptions.length > 0 
-          ? `Feedback on ordered dishes: ${descriptions.join('; ')}`
-          : "Ordered meals matched expectation perfectly."
+        event_description: descriptions.length > 0
+          ? `Feedback: ${descriptions.join('; ')}`
+          : 'Meal matched expectations.',
       },
       {
         onSuccess: (data) => {
@@ -145,29 +121,22 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
   };
 
   const getRecentEvolution = () => {
-    if (!updatedProfile || !updatedProfile.dna_matrix) return null;
-    const matrix = typeof updatedProfile.dna_matrix === 'string' 
-      ? JSON.parse(updatedProfile.dna_matrix) 
+    if (!updatedProfile?.dna_matrix) return null;
+    const matrix = typeof updatedProfile.dna_matrix === 'string'
+      ? JSON.parse(updatedProfile.dna_matrix)
       : updatedProfile.dna_matrix;
-      
-    if (matrix.recent_evolution && matrix.recent_evolution.length > 0) {
-      return matrix.recent_evolution[0]; // Get the latest change
-    }
-    return null;
+    return matrix.recent_evolution?.[0] ?? null;
   };
 
   const recentEvent = getRecentEvolution();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-lg bg-card/95 border border-border rounded-3xl p-6 @md:p-8 shadow-2xl relative max-h-[85vh] overflow-y-auto flex flex-col space-y-6">
-        
+      <div className="w-full max-w-lg bg-card/95 border border-border rounded-3xl p-6 shadow-2xl relative max-h-[85vh] overflow-y-auto flex flex-col space-y-6">
+
         {/* Close Button */}
         {!isSubmitted && (
-          <button 
-            onClick={onClose} 
-            className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-muted text-muted-foreground transition-colors"
-          >
+          <button onClick={onClose} className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-muted text-muted-foreground transition-colors">
             <X className="w-5 h-5" />
           </button>
         )}
@@ -180,13 +149,11 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
             <div className="space-y-2">
               <h2 className="text-2xl font-black tracking-tight">Taste DNA Updated!</h2>
               <p className="text-sm text-muted-foreground max-w-sm">
-                Thank you for the feedback. Your continuous learning profile has dynamically adapted.
+                Thank you for the feedback. Your profile has dynamically adapted.
               </p>
             </div>
-            
-            {/* Taste DNA Update History Preview */}
             {recentEvent && (
-              <div className="w-full bg-muted/40 border border-primary/30 rounded-2xl p-5 mt-4 text-left space-y-3 relative overflow-hidden">
+              <div className="w-full bg-muted/40 border border-primary/30 rounded-2xl p-5 text-left space-y-3 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full" />
                 <div className="flex items-center gap-2 text-primary font-bold">
                   <History className="w-4 h-4" />
@@ -194,13 +161,10 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
                 </div>
                 <div className="space-y-1 relative z-10">
                   <p className="text-xs font-semibold text-foreground">{recentEvent.event}</p>
-                  <p className="text-sm font-medium text-muted-foreground leading-relaxed">
-                    {recentEvent.description}
-                  </p>
+                  <p className="text-sm font-medium text-muted-foreground leading-relaxed">{recentEvent.description}</p>
                 </div>
               </div>
             )}
-            
             <button
               onClick={onClose}
               className="mt-6 w-full py-3.5 bg-primary text-primary-foreground text-sm font-bold rounded-xl hover:bg-primary/95 transition-all shadow-md active:scale-95"
@@ -209,143 +173,95 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2 text-center">
-              <div className="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Star className="w-6 h-6 fill-amber-500/20" />
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Header */}
+            <div className="space-y-1.5 text-center">
+              <div className="w-11 h-11 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Star className="w-5 h-5 fill-amber-500/20" />
               </div>
-              <h2 className="text-2xl font-black tracking-tight">How was your meal?</h2>
+              <h2 className="text-xl font-black tracking-tight">How was your meal?</h2>
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                Help us refine your Taste DNA. Select any dishes that deviated from your expectations across any of our 8 dimensions.
+                👍 dishes you loved, or tap <span className="text-primary font-semibold">Suggest Improvement</span> to help us refine your Taste DNA.
               </p>
             </div>
 
-            <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 no-scrollbar">
+            {/* Dish list */}
+            <div className="space-y-3 max-h-[52vh] overflow-y-auto pr-1 no-scrollbar">
               {orderedDishes.map((dish) => {
-                const isChecked = !!selectedDishes[dish.id];
+                const likeState = likedDishes[dish.id];
+                const isExpanded = !!expandedDishes[dish.id];
                 const feedback = feedbackDeltas[dish.id] || {};
 
                 return (
-                  <div 
-                    key={dish.id} 
-                    className={`border rounded-2xl p-4 transition-all duration-300 ${isChecked ? 'bg-muted/40 border-primary/40' : 'bg-card border-border hover:border-border/80'}`}
+                  <div
+                    key={dish.id}
+                    className={`border rounded-2xl p-3.5 transition-all duration-300 ${isExpanded ? 'bg-muted/30 border-primary/30' : 'bg-card border-border'}`}
                   >
-                    <div 
-                      onClick={() => toggleDishSelection(dish.id)}
-                      className="flex items-center gap-3 cursor-pointer select-none"
-                    >
-                      <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${isChecked ? 'bg-primary border-primary text-primary-foreground' : 'border-muted-foreground/50'}`}>
-                        {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                      </div>
-                      <span className="font-bold text-sm">{dish.name}</span>
+                    {/* Row: dish name | 👍 | Suggest Improvement */}
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-sm flex-1 truncate">{dish.name}</span>
+
+                      {/* Thumbs up */}
+                      <button
+                        type="button"
+                        onClick={() => toggleLike(dish.id)}
+                        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shrink-0 ${
+                          likeState === true
+                            ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                            : 'border-border text-muted-foreground hover:border-emerald-500/40 hover:text-emerald-400'
+                        }`}
+                      >
+                        <ThumbsUp className="w-3.5 h-3.5" />
+                        {likeState === true && <span>Liked</span>}
+                      </button>
+
+                      {/* Suggest Improvement toggle */}
+                      <button
+                        type="button"
+                        onClick={() => toggleExpanded(dish.id)}
+                        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shrink-0 ${
+                          isExpanded
+                            ? 'bg-primary/10 border-primary/40 text-primary'
+                            : 'border-border text-muted-foreground hover:border-primary/30 hover:text-primary'
+                        }`}
+                      >
+                        {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                        <span>Suggest Improvement</span>
+                      </button>
                     </div>
 
-                    {isChecked && (
-                      <div className="mt-4 pt-4 border-t border-border/50 space-y-4 animate-fadeIn">
-                        {/* 1. Spiciness */}
-                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
-                          <span className="text-xs font-semibold text-muted-foreground">Spiciness:</span>
-                          <div className="flex gap-2">
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'spice', -0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.spice === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >🌶️ Too Spicy</button>
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'spice', 0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.spice === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >Need More Spice</button>
+                    {/* Expandable dimension sliders */}
+                    {isExpanded && (
+                      <div className="mt-3 pt-3 border-t border-border/50 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                        {DIMENSIONS.map(({ key, label, less, more, lessEmoji, moreEmoji }) => (
+                          <div key={key} className="flex items-center justify-between gap-2">
+                            <span className="text-[11px] font-semibold text-muted-foreground w-20 shrink-0">{label}</span>
+                            <div className="flex gap-1.5 flex-wrap justify-end">
+                              <button
+                                type="button"
+                                onClick={() => handleDeltaChange(dish.id, key, -0.10)}
+                                className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all border ${
+                                  feedback[key] === -0.10
+                                    ? 'bg-red-500/10 text-red-400 border-red-500/30'
+                                    : 'bg-muted/20 border-border text-muted-foreground hover:bg-muted/40'
+                                }`}
+                              >
+                                {lessEmoji} {less}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeltaChange(dish.id, key, 0.10)}
+                                className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all border ${
+                                  feedback[key] === 0.10
+                                    ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                                    : 'bg-muted/20 border-border text-muted-foreground hover:bg-muted/40'
+                                }`}
+                              >
+                                {moreEmoji} {more}
+                              </button>
+                            </div>
                           </div>
-                        </div>
-
-                        {/* 2. Sweetness */}
-                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
-                          <span className="text-xs font-semibold text-muted-foreground">Sweetness:</span>
-                          <div className="flex gap-2">
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'sweetness', -0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.sweetness === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >🍬 Too Sweet</button>
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'sweetness', 0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.sweetness === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >Need Sweetness</button>
-                          </div>
-                        </div>
-
-                        {/* 3. Creaminess */}
-                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
-                          <span className="text-xs font-semibold text-muted-foreground">Creaminess:</span>
-                          <div className="flex gap-2">
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'creaminess', -0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.creaminess === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >🥛 Too Rich</button>
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'creaminess', 0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.creaminess === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >Need More Cream</button>
-                          </div>
-                        </div>
-
-                        {/* 4. Tanginess */}
-                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
-                          <span className="text-xs font-semibold text-muted-foreground">Tanginess:</span>
-                          <div className="flex gap-2">
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'tanginess', -0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.tanginess === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >🍋 Too Sour/Tangy</button>
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'tanginess', 0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.tanginess === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >Need More Tang</button>
-                          </div>
-                        </div>
-
-                        {/* 5. Masala Intensity */}
-                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
-                          <span className="text-xs font-semibold text-muted-foreground">Masala:</span>
-                          <div className="flex gap-2">
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'masala_intensity', -0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.masala_intensity === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >🌿 Too Much Masala</button>
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'masala_intensity', 0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.masala_intensity === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >Need More Masala</button>
-                          </div>
-                        </div>
-
-                        {/* 6. Crunchiness */}
-                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
-                          <span className="text-xs font-semibold text-muted-foreground">Crunchiness:</span>
-                          <div className="flex gap-2">
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'crunchiness', -0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.crunchiness === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >💥 Too Hard</button>
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'crunchiness', 0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.crunchiness === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >Need More Crunch</button>
-                          </div>
-                        </div>
-
-                        {/* 7. Oiliness */}
-                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
-                          <span className="text-xs font-semibold text-muted-foreground">Oiliness:</span>
-                          <div className="flex gap-2">
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'oiliness', -0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.oiliness === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >💧 Too Oily</button>
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'oiliness', 0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.oiliness === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >Too Dry</button>
-                          </div>
-                        </div>
-
-                        {/* 8. Saltiness */}
-                        <div className="flex flex-col @xl:flex-row @xl:items-center justify-between gap-2">
-                          <span className="text-xs font-semibold text-muted-foreground">Saltiness:</span>
-                          <div className="flex gap-2">
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'saltiness', -0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.saltiness === -0.10 ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >🧂 Too Salty</button>
-                            <button type="button" onClick={() => handleDeltaChange(dish.id, 'saltiness', 0.10)}
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all border ${feedback.saltiness === 0.10 ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' : 'bg-muted/30 border-border hover:bg-muted/50'}`}
-                            >Bland / Need Salt</button>
-                          </div>
-                        </div>
-
+                        ))}
                       </div>
                     )}
                   </div>
@@ -360,7 +276,7 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
               </div>
             )}
 
-            <div className="flex gap-4 pt-2">
+            <div className="flex gap-3 pt-1">
               <button
                 type="button"
                 onClick={onClose}
@@ -372,9 +288,9 @@ export function PostOrderFeedback({ isOpen, onClose, orderedDishes }: PostOrderF
               <button
                 type="submit"
                 disabled={submitFeedback.isPending}
-                className="flex-1 p-3 bg-primary text-primary-foreground text-sm font-bold rounded-xl hover:bg-primary/95 transition-all shadow-md disabled:opacity-50 flex items-center justify-center"
+                className="flex-1 p-3 bg-primary text-primary-foreground text-sm font-bold rounded-xl hover:bg-primary/95 transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {submitFeedback.isPending ? "Submitting..." : "Submit Feedback"}
+                {submitFeedback.isPending ? 'Submitting…' : 'Submit Feedback'}
               </button>
             </div>
           </form>

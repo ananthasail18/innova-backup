@@ -160,3 +160,20 @@ export interface RestaurantDetail {
   recommendations?: DishRecommendation[];
 }
 
+export interface CommunityExplanation {
+  chosen_by: number;
+  average_similarity: number;
+  reason: string;
+}
+
+export interface CommunityDishRecommendation {
+  dish: Dish;
+  community_score: number;
+  explanation: CommunityExplanation;
+}
+
+export interface CommunityRecommendationResponse {
+  community_size: number;
+  average_community_similarity: number;
+  recommendations: CommunityDishRecommendation[];
+}

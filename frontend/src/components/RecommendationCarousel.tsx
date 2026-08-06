@@ -1,18 +1,31 @@
-import type { DishRecommendation, Dish } from '@/services/types';
+import type { Dish } from '@/services/types';
 import { PriceTag } from '@/components/PriceTag';
 import { VegIndicator } from '@/components/VegIndicator';
-import { Sparkles, Plus, CheckCircle } from 'lucide-react';
+import { Sparkles, Plus, CheckCircle, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { DishImage } from '@/components/DishImage';
 import { useCart } from '@/hooks/useCart';
 import { useState } from 'react';
 
-export function RecommendationCarousel({ recommendations }: { recommendations: DishRecommendation[] }) {
+export interface CarouselItem {
+  dish: Dish;
+  badgeText: string;
+  reasonText?: string;
+}
+
+interface RecommendationCarouselProps {
+  title: string;
+  subtitle: string;
+  items: CarouselItem[];
+  icon?: 'sparkles' | 'users';
+}
+
+export function RecommendationCarousel({ title, subtitle, items, icon = 'sparkles' }: RecommendationCarouselProps) {
   const navigate = useNavigate();
   const { addItem } = useCart();
   const [addedItemIds, setAddedItemIds] = useState<Record<string, boolean>>({});
 
-  if (!recommendations || recommendations.length === 0) return null;
+  if (!items || items.length === 0) return null;
 
   const handleAddToCart = (e: React.MouseEvent, dish: Dish) => {
     e.stopPropagation();
@@ -28,18 +41,18 @@ export function RecommendationCarousel({ recommendations }: { recommendations: D
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="p-1.5 bg-orange-500/20 rounded-lg text-orange-400">
-            <Sparkles className="w-4 h-4" />
+            {icon === 'sparkles' ? <Sparkles className="w-4 h-4" /> : <Users className="w-4 h-4" />}
           </div>
           <div>
-            <h3 className="font-extrabold text-sm text-white tracking-tight">Top Recommended for You</h3>
-            <p className="text-[10px] text-neutral-400">Ranked by 8D Taste Vector Match</p>
+            <h3 className="font-extrabold text-sm text-white tracking-tight">{title}</h3>
+            <p className="text-[10px] text-neutral-400">{subtitle}</p>
           </div>
         </div>
       </div>
       
       {/* Horizontal Spaced Recommendation Scroll View */}
       <div className="flex items-stretch gap-3.5 overflow-x-auto pb-2 pt-1 no-scrollbar">
-        {recommendations.slice(0, 8).map(({ dish, score, reasons }) => (
+        {items.slice(0, 8).map(({ dish, badgeText, reasonText }) => (
           <div
             key={dish.id}
             onClick={() => navigate(`/dish/${dish.id}`)}
@@ -49,7 +62,7 @@ export function RecommendationCarousel({ recommendations }: { recommendations: D
             <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-neutral-950 border border-neutral-800">
               <DishImage src={dish.image_url} alt={dish.name} className="w-full h-full object-cover" />
               <span className="absolute top-1 right-1 bg-gradient-to-r from-orange-600 to-amber-600 text-white font-black text-[9px] px-1.5 py-0.5 rounded-full shadow-md">
-                {Math.round(score * 100)}% Match
+                {badgeText}
               </span>
             </div>
             
@@ -62,9 +75,9 @@ export function RecommendationCarousel({ recommendations }: { recommendations: D
                 </div>
               </div>
 
-              {reasons && reasons.length > 0 && (
+              {reasonText && (
                 <p className="text-[9px] text-neutral-400 line-clamp-1 italic">
-                  💡 {reasons[0].text}
+                  💡 {reasonText}
                 </p>
               )}
             </div>

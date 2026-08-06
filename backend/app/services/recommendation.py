@@ -35,11 +35,12 @@ class RecommendationService:
             float(obj.saltiness_preference if hasattr(obj, 'saltiness_preference') else obj.saltiness_level)
         ]
 
-    def _get_community_score(self, user_id: str, dish_id: str, user_taste_vector: List[float]) -> float:
+    def _get_community_score(self, user_id: str, dish_id: str, user_taste_vector: List[float]) -> Tuple[float, int]:
+        """Returns (score, liked_count) where liked_count is similar users who liked this dish."""
         # Find other users' signals for this dish
         signals = self.db.query(CommunitySignal).filter(CommunitySignal.dish_id == dish_id, CommunitySignal.user_id != user_id).all()
         if not signals:
-            return 0.0
+            return 0.0, 0
             
         # Get their taste profiles
         other_user_ids = [s.user_id for s in signals]
@@ -49,6 +50,7 @@ class RecommendationService:
         
         score_sum = 0.0
         weight_sum = 0.0
+        liked_count = 0
         
         for signal in signals:
             if signal.user_id not in profile_map:
@@ -57,20 +59,21 @@ class RecommendationService:
             other_vector = self._get_taste_vector(profile_map[signal.user_id])
             sim = cosine_similarity(user_taste_vector, other_vector)
             
-            # Only consider users with similar taste (> 0.82)
-            if sim > 0.82:
-                # signal weight: liked is positive, rating can be scaled
+            # Only consider users with similar taste (> 0.70)
+            if sim > 0.70:
                 item_score = 0.0
-                if signal.liked: item_score += 0.5
+                if signal.liked:
+                    item_score += 0.5
+                    liked_count += 1
                 if signal.would_reorder: item_score += 0.5
                 
                 score_sum += item_score * sim
                 weight_sum += sim
                 
         if weight_sum == 0:
-            return 0.0
+            return 0.0, liked_count
             
-        return score_sum / weight_sum
+        return score_sum / weight_sum, liked_count
 
     def get_recommendations(self, user_id: str, restaurant_id: str = None) -> RecommendationResponse:
         user_profile = self.db.query(TasteProfile).filter(TasteProfile.user_id == user_id).first()
@@ -95,7 +98,7 @@ class RecommendationService:
             taste_match = cosine_similarity(user_vector, dish_vector)
             
             # 2. Community Score (15%)
-            community_score = self._get_community_score(user_id, dish.id, user_vector)
+            community_score, community_liked_count = self._get_community_score(user_id, dish.id, user_vector)
             
             # 3. Popularity / Restaurant Highlight (25%)
             popularity = float(dish.popularity_score)
@@ -120,8 +123,9 @@ class RecommendationService:
             for trait in matching_traits:
                 reasons.append(RecommendationReason(type="taste_match", text=f"Matches your {trait} preference"))
                 
-            if community_score > 0.70:
-                reasons.append(RecommendationReason(type="community", text="Highly rated by people with similar Taste DNA"))
+            if community_score > 0.3 or community_liked_count > 0:
+                count_text = f"{community_liked_count} people with similar taste liked this" if community_liked_count > 0 else "Liked by people with similar Taste DNA"
+                reasons.append(RecommendationReason(type="community", text=count_text))
                 
             if popularity > 0.80:
                 reasons.append(RecommendationReason(type="popularity", text="Trending dish right now"))
@@ -134,7 +138,8 @@ class RecommendationService:
                     dish=DishOut.model_validate(dish),
                     score=final_score,
                     confidence=confidence,
-                    reasons=reasons
+                    reasons=reasons,
+                    community_liked_count=community_liked_count
                 )
             )
             

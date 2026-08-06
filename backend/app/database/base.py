@@ -12,3 +12,4 @@ from app.models.community_signal import CommunitySignal
 from app.models.knowledge import KnowledgeDocument, KnowledgeChunk, KnowledgeEmbedding
 from app.models.metadata import Ingredient, DishIngredient, Allergen, DishAllergen, DishPairing
 from app.models.notes import RestaurantNotes
+from app.models.user_dish_interaction import UserDishInteraction

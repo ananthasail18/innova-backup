@@ -19,7 +19,7 @@ class GeminiProvider(LLMProvider):
             model_name = "llama-3.3-70b-versatile"
         else:
             base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
-            model_name = "gemini-2.5-flash"
+            model_name = "gemini-2.0-flash"
 
         self.api_key = api_key
         self.client = OpenAI(
@@ -45,7 +45,7 @@ class GeminiProvider(LLMProvider):
             params["tools"] = tools
 
         # Try primary model first, then fallback models if rate limited or quota exceeded
-        models_to_try = [self.model_name, "gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-flash-8b"]
+        models_to_try = [self.model_name, "gemini-2.0-flash-lite", "gemini-1.5-flash-latest"]
 
         for model in models_to_try:
             params["model"] = model

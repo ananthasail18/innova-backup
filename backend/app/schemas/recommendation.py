@@ -11,6 +11,7 @@ class DishRecommendation(BaseModel):
     score: float
     confidence: float
     reasons: List[RecommendationReason]
+    community_liked_count: int = 0
 
 class RecommendationResponse(BaseModel):
     user_id: str

@@ -30,6 +30,7 @@ def create_app() -> FastAPI:
     from app.routes.taste_profile import router as taste_profile_router
     from app.routes.recommendations import router as recommendations_router
     from app.routes.community import router as community_router
+    from app.routes.community_recommendations import router as community_recommendations_router
     from app.routes.chat import router as chat_router
     from app.routes.rag import router as rag_router
     from app.routes.knowledge import router as knowledge_router
@@ -42,6 +43,7 @@ def create_app() -> FastAPI:
     app.include_router(taste_profile_router, prefix=settings.API_V1_STR, tags=["taste_profile"])
     app.include_router(recommendations_router, prefix=settings.API_V1_STR, tags=["recommendations"])
     app.include_router(community_router, prefix=settings.API_V1_STR, tags=["community"])
+    app.include_router(community_recommendations_router, prefix=settings.API_V1_STR, tags=["community_recommendations"])
     app.include_router(chat_router, prefix=settings.API_V1_STR, tags=["chat"])
     app.include_router(rag_router, prefix=settings.API_V1_STR + "/rag", tags=["rag"])
     app.include_router(knowledge_router, prefix=settings.API_V1_STR, tags=["knowledge"])

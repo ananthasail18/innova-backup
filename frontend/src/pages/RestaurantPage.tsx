@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSession } from '@/hooks/SessionContext';
-import { useCreateUser, useTasteProfile } from '@/services/queries';
+import { useCreateUser, useTasteProfile, useCommunityRecommendations } from '@/services/queries';
 import { useRestaurantContext } from '@/hooks/RestaurantContext';
 import { CategoryTabs } from '@/components/CategoryTabs';
 import { DishGrid } from '@/components/DishGrid';
@@ -40,6 +40,7 @@ function RestaurantPageInner() {
   
   const { data: profile, isLoading: loadingProfile } = useTasteProfile(userId);
   const createUser = useCreateUser();
+  const { data: communityData, isLoading: loadingCommunity } = useCommunityRecommendations(restaurant?.id, userId);
 
   if (isLoading || loadingProfile) {
     return <LoadingSkeleton items={6} />;
@@ -119,13 +120,7 @@ function RestaurantPageInner() {
             </div>
           </div>
 
-          <button
-            onClick={() => navigate('/profile')}
-            className="flex items-center gap-1 bg-gradient-to-r from-orange-600 to-amber-600 text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow-md hover:scale-105 transition-all"
-          >
-            <Sparkles className="w-3 h-3 text-yellow-300 fill-yellow-300" />
-            <span>8D Taste DNA</span>
-          </button>
+
         </div>
 
         {/* Quick Action Pills: Multi-Restaurant Switcher + Shortcuts */}
@@ -173,7 +168,32 @@ function RestaurantPageInner() {
       {/* Start Directly with Recommendations */}
       {recommendations && recommendations.length > 0 && (
         <div className="pt-2">
-          <RecommendationCarousel recommendations={recommendations} />
+          <RecommendationCarousel 
+            title="Top Recommended for You"
+            subtitle="Ranked by 8D Taste Vector Match"
+            icon="sparkles"
+            items={recommendations.map(r => ({
+              dish: r.dish,
+              badgeText: `${Math.round(r.score * 100)}% Match`,
+              reasonText: r.reasons && r.reasons.length > 0 ? r.reasons[0].text : undefined
+            }))}
+          />
+        </div>
+      )}
+      
+      {/* Community Recommendations (Users with similar TasteDNA liked this) */}
+      {communityData && communityData.recommendations && communityData.recommendations.length > 0 && (
+        <div className="pt-2">
+          <RecommendationCarousel 
+            title="Users with similar TasteDNA liked this"
+            subtitle={`Based on ${communityData.community_size} users with similar taste`}
+            icon="users"
+            items={communityData.recommendations.map((r: any) => ({
+              dish: r.dish,
+              badgeText: `${Math.round(r.explanation.average_similarity * 100)}% Match`,
+              reasonText: r.explanation.reason
+            }))}
+          />
         </div>
       )}
       
