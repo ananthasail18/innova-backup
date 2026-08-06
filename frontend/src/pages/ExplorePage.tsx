@@ -33,7 +33,7 @@ function ExploreCard({ item }: { item: ExploreItem }) {
           alt={dish.name}
           className="w-full h-full object-cover"
         />
-        {dish.is_veg && (
+        {dish.is_vegetarian && (
           <span className="absolute top-1 left-1 bg-emerald-500 text-white text-[8px] font-black px-1 py-0.5 rounded">
             VEG
           </span>
