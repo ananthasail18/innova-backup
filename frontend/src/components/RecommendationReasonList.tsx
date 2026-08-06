@@ -1,5 +1,4 @@
 import type { RecommendationReason } from '@/services/types';
-import { Check } from 'lucide-react';
 
 export function RecommendationReasonList({ reasons }: { reasons: RecommendationReason[] }) {
   if (!reasons || reasons.length === 0) return null;

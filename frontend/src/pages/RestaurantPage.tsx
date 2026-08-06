@@ -40,7 +40,7 @@ function RestaurantPageInner() {
   
   const { data: profile, isLoading: loadingProfile } = useTasteProfile(userId);
   const createUser = useCreateUser();
-  const { data: communityData, isLoading: loadingCommunity } = useCommunityRecommendations(restaurant?.id, userId);
+  const { data: communityData } = useCommunityRecommendations(restaurant?.id, userId);
 
   if (isLoading || loadingProfile) {
     return <LoadingSkeleton items={6} />;

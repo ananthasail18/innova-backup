@@ -12,7 +12,6 @@ import {
   Signal, 
   MapPin, 
   ChevronDown, 
-  Sparkles,
   QrCode
 } from 'lucide-react';
 

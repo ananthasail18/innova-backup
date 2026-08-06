@@ -10,7 +10,15 @@ interface MobileBottomNavProps {
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ isPhoneFrame = false }) => {
   const { totalItems } = useCart();
 
-  const navItems = [
+  interface NavItem {
+    to: string;
+    icon: any;
+    label: string;
+    badgeCount?: number;
+    badgeText?: string;
+  }
+
+  const navItems: NavItem[] = [
     { to: '/restaurant', icon: Utensils, label: 'Menu' },
     { to: '/explore', icon: Users, label: 'Explore' },
     { to: '/profile', icon: Sparkles, label: 'Taste DNA' },
